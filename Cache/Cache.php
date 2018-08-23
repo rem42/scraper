@@ -16,15 +16,25 @@ abstract class Cache implements ICache
 	protected $reflectionClass;
 
 	/**
-	 * Cache constructor.
+	 * @param Request $request
 	 *
-	 * @param Request          $request
-	 * @param \ReflectionClass $reflectionClass
+	 * @return $this
 	 */
-	public function __construct(Request $request, \ReflectionClass $reflectionClass)
+	public function setRequest(?Request $request)
 	{
 		$request->removeFioritures();
-		$this->request         = $request;
+		$this->request = $request;
+		return $this;
+	}
+
+	/**
+	 * @param \ReflectionClass $reflectionClass
+	 *
+	 * @return $this
+	 */
+	public function setReflectionClass(?\ReflectionClass $reflectionClass)
+	{
 		$this->reflectionClass = $reflectionClass;
+		return $this;
 	}
 }

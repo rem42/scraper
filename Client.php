@@ -5,7 +5,7 @@ namespace Scraper\Scraper;
 use GuzzleHttp\Psr7\Response;
 use Scraper\Scraper\Annotation\Reader;
 use Scraper\Scraper\Annotation\UrlAnnotation;
-use Scraper\Scraper\Cache\ICache;
+use Scraper\Scraper\Cache\Cache;
 use Scraper\Scraper\ContentType\IContentType;
 use Scraper\Scraper\Protocol\IProtocol;
 use Scraper\Scraper\Request\Request;
@@ -18,7 +18,7 @@ class Client
 	protected $cache = false;
 
 	/**
-	 * @var ICache
+	 * @var Cache
 	 */
 	protected $cacheModel;
 
@@ -47,7 +47,7 @@ class Client
 	/**
 	 * @return $this
 	 */
-	public function enableCache(ICache $cache)
+	public function enableCache(Cache $cache)
 	{
 		$this->cache      = true;
 		$this->cacheModel = $cache;
@@ -63,11 +63,17 @@ class Client
 	 */
 	private function fetchData(Request $request, \ReflectionClass $reflectionClass, UrlAnnotation $urlAnnotation)
 	{
+		if($this->cache && $this->cacheModel instanceof Cache){
+			$this->cacheModel->setRequest($request);
+			$this->cacheModel->setReflectionClass($reflectionClass);
+		}else{
+			$this->cache = false;
+		}
 		try {
 			$cacheRequest = false;
-			if ($this->cache && $this->cacheModel instanceof ICache && $this->cacheModel->exist($request, $reflectionClass)) {
+			if ($this->cache && $this->cacheModel->exist()) {
 				$cacheRequest = true;
-				$response     = new Response(200, [], $this->cacheModel->get($request, $reflectionClass));
+				$response     = new Response(200, [], $this->cacheModel->get());
 			}
 			if (!$cacheRequest) {
 				/** @var IProtocol $class */
