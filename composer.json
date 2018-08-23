@@ -1,0 +1,28 @@
+{
+  "name": "rem42/scraper",
+  "description": "API Scraper website",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "rem42",
+      "email": "me@remy.ovh"
+    }
+  ],
+  "require": {
+    "php": ">=5.5.9",
+    "doctrine/common": "^2.8",
+    "symfony/dom-crawler": "^3.0",
+    "php-http/guzzle6-adapter": "^1.1",
+    "jms/serializer-bundle": "^2.0"
+  },
+  "suggest": {
+    "ext-json": "If you need to support JSON format",
+    "ext-simplexml": "If you need to support SimpleXML format",
+    "ext-soap": "If you need to support Soap request"
+  },
+  "autoload": {
+    "psr-4": {
+      "Scraper\\Scraper\\": ""
+    }
+  }
+}
