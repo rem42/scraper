@@ -94,7 +94,7 @@ class Client
 			} else {
 				/** @var IContentType $class */
 				$class = (new \ReflectionClass($urlAnnotation->contentType))
-					->newInstanceArgs([$reflectionClass, $response, $urlAnnotation]);
+					->newInstanceArgs([$reflectionClass, $request, $response, $urlAnnotation]);
 			}
 
 			/** @var Response $response */
