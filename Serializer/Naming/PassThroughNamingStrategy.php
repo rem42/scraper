@@ -1,6 +1,6 @@
 <?php
 
-namespace Scraper\Scraper\Serializer\JMS;
+namespace Scraper\Scraper\Serializer\Naming;
 
 use JMS\Serializer\Metadata\PropertyMetadata;
 use JMS\Serializer\Naming\PropertyNamingStrategyInterface;
