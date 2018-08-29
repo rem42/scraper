@@ -6,6 +6,8 @@ use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use Scraper\Scraper\Request\Body\BodyMultipart;
+use Scraper\Scraper\Request\Body\Multipart;
 
 class HttpClient implements HttpClientInterface
 {
@@ -15,6 +17,7 @@ class HttpClient implements HttpClientInterface
 	public $client;
 
 	protected $options;
+	protected $container = [];
 
 	protected $headers = [];
 
@@ -35,7 +38,6 @@ class HttpClient implements HttpClientInterface
 		$this->headers = [
 			"headers" => [],
 			"query" => [],
-			"form_params" => [],
 		];
 	}
 
@@ -47,24 +49,6 @@ class HttpClient implements HttpClientInterface
 	public function authenticate($tokenOrLogin, $password, $authMethod)
 	{
 		// TODO: Implement authenticate() method.
-	}
-
-	/**
-	 * @param       $httpMethod
-	 * @param       $path
-	 * @param null  $body
-	 * @param array $headers
-	 *
-	 * @return Request
-	 */
-	public function createRequest($httpMethod, $path, $body = null, array $headers = [])
-	{
-		return new Request(
-			$httpMethod,
-			$path,
-			array_merge($this->headers, $headers),
-			$body
-		);
 	}
 
 	/**
@@ -83,22 +67,6 @@ class HttpClient implements HttpClientInterface
 	}
 
 	/**
-	 * @return Request
-	 */
-	public function getLastRequest()
-	{
-		return $this->lastRequest;
-	}
-
-	/**
-	 * @return Response
-	 */
-	public function getLastResponse()
-	{
-		return $this->lastResponse;
-	}
-
-	/**
 	 * @param string $path
 	 * @param array  $parameters
 	 * @param array  $headers
@@ -111,9 +79,13 @@ class HttpClient implements HttpClientInterface
 	{
 		$this->setQuery($parameters);
 		$this->setHeaders($headers);
-		$this->setFormParams($body);
+		if ($body instanceof BodyMultipart) {
+			$this->setMultipart($body);
+		} elseif (is_array($body)) {
+			$this->setFormParams($body);
+		}
 
-		return $this->client->request('POST', $path, $this->headers);
+		return  $this->client->request('POST', $path, $this->headers);
 	}
 
 	/**
@@ -151,7 +123,7 @@ class HttpClient implements HttpClientInterface
 	public function setFormParams(array $body = [])
 	{
 		if ($body) {
-			$this->headers["form_params"] = array_merge($this->headers["form_params"], $body);
+			$this->headers["form_params"] = $body;
 		}
 	}
 
@@ -182,5 +154,65 @@ class HttpClient implements HttpClientInterface
 		if ($query) {
 			$this->headers["query"] = $query;
 		}
+	}
+
+	/**
+	 * @param       $httpMethod
+	 * @param       $path
+	 * @param null  $body
+	 * @param array $headers
+	 *
+	 * @return Request
+	 */
+	public function createRequest($httpMethod, $path, $body = null, array $headers = [])
+	{
+		return new Request(
+			$httpMethod,
+			$path,
+			array_merge($this->headers, $headers),
+			$body
+		);
+	}
+
+	/**
+	 * @return Request
+	 */
+	public function getLastRequest()
+	{
+		return $this->lastRequest;
+	}
+
+	/**
+	 * @return Response
+	 */
+	public function getLastResponse()
+	{
+		return $this->lastResponse;
+	}
+
+	/**
+	 * @param BodyMultipart $body
+	 */
+	public function setMultipart(BodyMultipart $body)
+	{
+		$array = [];
+		/** @var Multipart $item */
+		foreach ($body->getMultipart() as $item) {
+			$multi = [];
+			if($item->getName()){
+				$multi['name'] = $item->getName();
+			}
+			if($item->getContents()){
+				$multi['contents'] = $item->getContents();
+			}
+			if($item->getFilename()){
+				$multi['filename'] = $item->getFilename();
+			}
+			if($item->getHeaders()){
+				$multi['headers'] = $item->getHeaders();
+			}
+			$array[] = $multi;
+		}
+		$this->headers["multipart"] = $array;
 	}
 }
