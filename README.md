@@ -39,4 +39,12 @@ In the result var there is the GooglePrintSearch entity wich contains all the re
 List of supported Scraper
 -------------------------
 
-- In progress
+- [Allocine](https://github.com/rem42/scraper-allocine)
+- [Avis Vérifiés](https://github.com/rem42/scraper-avis-verifies)
+- [Colissimo](https://github.com/rem42/scraper-colissimo)
+- [Google Play](https://github.com/rem42/scraper-google-play)
+- [Google Print](https://github.com/rem42/scraper-google-print)
+- [Itunes](https://github.com/rem42/scraper-itunes)
+- [ShortPixel](https://github.com/rem42/scraper-shortpixel)
+- [TinyPNG](https://github.com/rem42/scraper-tinypng)
+- [Trustpilot](https://github.com/rem42/scraper-trustpilot)
