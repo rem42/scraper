@@ -32,6 +32,6 @@ class Soap extends Protocol
 			$responseSoap = serialize($responseSoap);
 		}
 
-		return new Response(null, [], $responseSoap);
+		return new Response(200, [], $responseSoap);
 	}
 }
