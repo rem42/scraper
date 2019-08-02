@@ -87,9 +87,10 @@ class Client
 		}
 
 		try {
-			if (in_array(strtolower($urlAnnotation->contentType), ['html', 'json', 'text', 'xml'])) {
+			$contentType = $request->getContentType() ?? $urlAnnotation->contentType;
+			if (in_array(strtolower($contentType), ['html', 'json', 'text', 'xml'])) {
 				/** @var IContentType $class */
-				$class = (new \ReflectionClass('\Scraper\\Scraper\\ContentType\\' . ucfirst(strtolower($urlAnnotation->contentType))))
+				$class = (new \ReflectionClass('\Scraper\\Scraper\\ContentType\\' . ucfirst(strtolower($contentType))))
 					->newInstanceArgs([$reflectionClass, $request, $response, $urlAnnotation, $this->cacheModel]);
 			} else {
 				/** @var IContentType $class */
