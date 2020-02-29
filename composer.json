@@ -5,15 +5,20 @@
   "authors": [
     {
       "name": "rem42",
-      "email": "me@remy.ovh"
+      "email": "me@remy.ovh",
+      "homepage": "https://remy.ovh"
     }
   ],
   "require": {
-    "php": ">=5.5.9",
+    "php": "^7.4",
     "doctrine/common": "^2.8",
     "symfony/dom-crawler": "^3.0",
     "php-http/guzzle6-adapter": "^1.1",
     "jms/serializer-bundle": "^2.0"
+  },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "2.16.*",
+    "phpstan/phpstan": "0.12.*"
   },
   "suggest": {
     "ext-json": "If you need to support JSON format",
@@ -22,7 +27,15 @@
   },
   "autoload": {
     "psr-4": {
-      "Scraper\\Scraper\\": ""
+      "Scraper\\Scraper\\": "src/"
     }
+  },
+  "config": {
+    "bin-dir": "bin/"
+  },
+  "scripts": {
+    "static-analysis": "./bin/phpstan analyse src --level=max --no-progress -vvv",
+    "code-style-check": "./bin/php-cs-fixer fix --dry-run --verbose",
+    "code-style-fix": "./bin/php-cs-fixer fix"
   }
 }
