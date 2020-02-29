@@ -1,0 +1,24 @@
+language: php
+php:
+  - '7.4'
+
+install:
+  - composer install --no-interaction
+  - mkdir -p build/logs
+
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+
+script:
+  - "composer run-script static-analysis"
+  - "composer run-script code-style-check"
+  - "composer run-script rector-check"
+  - "composer run-script unit-test"
+
+after_success:
+  - travis_retry php bin/php-coveralls
+
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT

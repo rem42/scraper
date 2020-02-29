@@ -5,15 +5,21 @@
   "authors": [
     {
       "name": "rem42",
-      "email": "me@remy.ovh"
+      "email": "me@remy.ovh",
+      "homepage": "https://remy.ovh"
     }
   ],
   "require": {
-    "php": ">=5.5.9",
-    "doctrine/common": "^2.8",
-    "symfony/dom-crawler": "^3.0",
-    "php-http/guzzle6-adapter": "^1.1",
-    "jms/serializer-bundle": "^2.0"
+    "php": "^7.4",
+    "symfony/http-client-contracts": "^2.0",
+    "symfony/serializer-pack": "^1.0"
+  },
+  "require-dev": {
+    "rector/rector": "^0.7.16",
+    "rem42/php-cs-fixer-config": "^1.0",
+    "phpstan/phpstan": "0.12.*",
+    "phpunit/phpunit": "^9",
+    "php-coveralls/php-coveralls": "^2.2"
   },
   "suggest": {
     "ext-json": "If you need to support JSON format",
@@ -21,8 +27,30 @@
     "ext-soap": "If you need to support Soap request"
   },
   "autoload": {
+    "psr-0": {
+      "Scraper\\Scraper\\": "src/"
+    },
     "psr-4": {
-      "Scraper\\Scraper\\": ""
+      "Scraper\\Scraper\\": "src/"
     }
+  },
+  "autoload-dev": {
+    "psr-0": {
+      "Scraper\\Scraper\\Tests\\": "tests/"
+    },
+    "psr-4": {
+      "Scraper\\Scraper\\Tests\\": "tests/"
+    }
+  },
+  "config": {
+    "bin-dir": "bin/"
+  },
+  "scripts": {
+    "static-analysis": "./bin/phpstan analyse src --level=max --no-progress -vvv",
+    "code-style-check": "./bin/php-cs-fixer fix --dry-run --verbose",
+    "code-style-fix": "./bin/php-cs-fixer fix",
+    "rector-check": "./bin/rector process --dry-run",
+    "rector-fix": "./bin/rector process",
+    "unit-test": "./bin/phpunit"
   }
 }
