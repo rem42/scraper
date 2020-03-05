@@ -7,10 +7,10 @@ use Scraper\Scraper\Request\Request;
 
 interface ApiInterface
 {
-	public function __construct(Request $request, $data, UrlAnnotation $urlAnnotation);
+    public function __construct(Request $request, $data, UrlAnnotation $urlAnnotation);
 
-	/**
-	 * @return $object
-	 */
-	public function execute();
+    /**
+     * @return $object
+     */
+    public function execute();
 }

@@ -7,52 +7,53 @@ use Doctrine\Common\Annotations\Annotation\Target;
 
 /**
  * Class UrlAnnotation
- * @package Scraper\Scraper\Annotation
  *
  * @Annotation
  * @Target("CLASS")
  */
 class UrlAnnotation
 {
-	static $METHOD_GET  = "GET";
-	static $METHOD_POST = "POST";
-	static $METHOD_PUT  = "PUT";
+    public static $METHOD_GET  = 'GET';
+    public static $METHOD_POST = 'POST';
+    public static $METHOD_PUT  = 'PUT';
 
-	static $PROTOCOL_HTTP = "HTTP";
-	static $PROTOCOL_CURL = "CURL";
-	static $PROTOCOL_SOAP = "SOAP";
-	/**
-	 * @var string
-	 */
-	public $baseUrl;
+    public static $PROTOCOL_HTTP = 'HTTP';
+    public static $PROTOCOL_CURL = 'CURL';
+    public static $PROTOCOL_REST = 'REST';
+    public static $PROTOCOL_SOAP = 'SOAP';
+    public static $PROTOCOL_OAUTH = 'OAUTH';
+    /**
+     * @var string
+     */
+    public $baseUrl;
 
-	/**
-	 * @var string
-	 */
-	public $url;
+    /**
+     * @var string
+     */
+    public $url;
 
-	/**
-	 * @var string
-	 * @Enum({"HTTP", "SOAP", "CURL"})
-	 */
-	public $protocol;
+    /**
+     * @var string
+     * @Enum({"HTTP", "SOAP", "CURL", "OAUTH"})
+     */
+    public $protocol;
 
-	/**
-	 * @var string
-	 * @Enum({"POST", "GET", "PUT"})
-	 */
-	public $method;
+    /**
+     * @var string
+     * @Enum({"POST", "GET", "PUT"})
+     */
+    public $method;
 
-	/**
-	 * @var string
-	 */
-	public $contentType;
+    /**
+     * @var string
+     */
+    public $contentType;
 
-	/**
-	 * @return string
-	 */
-	public function getFullUrl()
-	{
-		return $this->baseUrl . $this->url;
-	}
+    /**
+     * @return string
+     */
+    public function getFullUrl()
+    {
+        return $this->baseUrl . $this->url;
+    }
 }
