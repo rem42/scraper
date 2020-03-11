@@ -17,10 +17,10 @@ class UrlAnnotation
     public static $METHOD_POST = 'POST';
     public static $METHOD_PUT  = 'PUT';
 
-    public static $PROTOCOL_HTTP = 'HTTP';
-    public static $PROTOCOL_CURL = 'CURL';
-    public static $PROTOCOL_REST = 'REST';
-    public static $PROTOCOL_SOAP = 'SOAP';
+    public static $PROTOCOL_HTTP  = 'HTTP';
+    public static $PROTOCOL_CURL  = 'CURL';
+    public static $PROTOCOL_REST  = 'REST';
+    public static $PROTOCOL_SOAP  = 'SOAP';
     public static $PROTOCOL_OAUTH = 'OAUTH';
     /**
      * @var string

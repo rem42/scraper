@@ -27,7 +27,7 @@ class Soap extends Protocol
             $responseSoap = $soap->__doRequest($this->request->getBody()[0], $this->urlAnnotation->getFullUrl(), $this->request->getAction(), $this->request->getVersion(), 0);
         } elseif ($this->request->isLoginNeed()) {
             $idSession    = $soap->login($this->request->getApiUser(), $this->request->getApiKey());
-            $responseSoap = $soap->{$this->request->getAction()}($idSession);
+            $responseSoap = $soap->{$this->request->getAction()}($idSession, $this->request->getId());
         } else {
             $responseSoap = $soap->{$this->request->getAction()}($this->request->getBody());
         }
