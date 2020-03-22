@@ -4,5 +4,5 @@ namespace Scraper\Scraper\Adapter;
 
 interface AdapterInterface
 {
-    public function execute();
+    public function execute(): object;
 }

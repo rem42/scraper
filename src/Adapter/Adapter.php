@@ -2,18 +2,18 @@
 
 namespace Scraper\Scraper\Adapter;
 
-use GuzzleHttp\Psr7\Response;
 use Scraper\Scraper\Annotation\Scraper;
-use Scraper\Scraper\Request\Request;
+use Scraper\Scraper\Request\ScraperRequest;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 abstract class Adapter implements AdapterInterface
 {
-    protected Request $request;
+    protected ScraperRequest $request;
     protected \ReflectionClass $reflexionClass;
-    protected Response $response;
+    protected ResponseInterface $response;
     protected Scraper $scraper;
 
-    public function __construct(Request $request, \ReflectionClass $reflexionClass, Response $response, Scraper $scraper)
+    public function __construct(ScraperRequest $request, \ReflectionClass $reflexionClass, ResponseInterface $response, Scraper $scraper)
     {
         $this->request        = $request;
         $this->reflexionClass = $reflexionClass;

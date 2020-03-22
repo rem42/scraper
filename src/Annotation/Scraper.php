@@ -6,8 +6,7 @@ use Doctrine\Common\Annotations\Annotation\Enum;
 use Doctrine\Common\Annotations\Annotation\Target;
 
 /**
- * Class Scraper
- *
+ * @Annotations
  * @Target("CLASS")
  */
 class Scraper
@@ -25,4 +24,9 @@ class Scraper
     public string $protocol;
 
     public string $responseAdapter;
+
+    public function url(): string
+    {
+        return strtolower($this->scheme) . '://' . rtrim($this->host, '/') . '/' . ltrim($this->path, '/');
+    }
 }

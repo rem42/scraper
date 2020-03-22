@@ -7,6 +7,7 @@ use Scraper\Scraper\Request\ScraperRequest;
 
 class ExtractAnnotation
 {
+    /** @var \ReflectionClass<ScraperRequest> */
     private \ReflectionClass $reflexionClass;
     private AnnotationReader $reader;
     private ScraperRequest $request;
@@ -29,6 +30,9 @@ class ExtractAnnotation
         return $self->getScraperAnnotation();
     }
 
+    /**
+     * @param \ReflectionClass<ScraperRequest>|null $reflectionClass
+     */
     protected function recursive(\ReflectionClass $reflectionClass =  null): void
     {
         if (null === $reflectionClass) {
@@ -41,6 +45,7 @@ class ExtractAnnotation
         }
 
         if ($annotation = $this->reader->getClassAnnotation($reflectionClass, Scraper::class)) {
+            /* @var Scraper $annotation */
             $this->extractAnnotation($annotation);
         }
     }
@@ -49,12 +54,22 @@ class ExtractAnnotation
     {
         $scraper = new Scraper();
 
+        $vars = get_object_vars($this->scraperAnnotation);
         // Initializing class properties
-        foreach ($this->scraperAnnotation as $property => $value) {
+        foreach ($vars as $property => $value) {
             $scraper->$property = $value;
         }
 
-        foreach ($annotation as $property => $value) {
+        $vars = get_object_vars($annotation);
+
+        foreach ($vars as $property => $value) {
+            if (preg_match_all('#{(.*?)}#', $value, $matchs)) {
+                foreach ($matchs[1] as $match) {
+                    $method       = 'get' . ucfirst($match);
+                    $requestValue = $this->request->$method();
+                    $value        = str_replace('{' . $match . '}', $requestValue, $value);
+                }
+            }
             $scraper->$property = $value;
         }
 
