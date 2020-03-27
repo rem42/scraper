@@ -69,10 +69,10 @@ class Oauth extends Protocol
                 natsort($value);
 
                 foreach ($value as $keyduplicate) {
-                    $return[] = $key . '=' . $keyduplicate;
+                    $return[] = rawurlencode($key) . '=' . $keyduplicate;
                 }
             } else {
-                $return[] = $key . '=' . $value;
+                $return[] = rawurlencode($key) . '=' . $value;
             }
         }
         return implode('&', $return);
