@@ -8,7 +8,9 @@ interface IRequestSoap
 
     public function isLoginNeed(): bool;
 
+    public function isRequestSpecific(): bool;
+
     public function getAction(): string;
 
-    public function getVersion(): string;
+    public function getVersion(): ?string;
 }
