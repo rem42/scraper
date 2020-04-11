@@ -8,6 +8,7 @@ use Scraper\Scraper\Api\AbstractApi;
 use Scraper\Scraper\Request\RequestBearer;
 use Scraper\Scraper\Request\RequestBody;
 use Scraper\Scraper\Request\RequestHeaders;
+use Scraper\Scraper\Request\RequestQuery;
 use Scraper\Scraper\Request\ScraperRequest;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -36,6 +37,10 @@ final class Client
 
         if ($this->request instanceof RequestHeaders) {
             $options['headers'] = $this->request->getHeaders();
+        }
+
+        if ($this->request instanceof RequestQuery) {
+            $options['query'] = $this->request->getQuery();
         }
 
         if ($this->request instanceof RequestBody) {

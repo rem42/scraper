@@ -44,8 +44,9 @@ class ExtractAnnotation
             $this->recursive($parentClass);
         }
 
-        if ($annotation = $this->reader->getClassAnnotation($reflectionClass, Scraper::class)) {
-            /* @var Scraper $annotation */
+        $annotation = $this->reader->getClassAnnotation($reflectionClass, Scraper::class);
+
+        if ($annotation instanceof Scraper) {
             $this->extractAnnotation($annotation);
         }
     }

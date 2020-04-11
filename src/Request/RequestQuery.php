@@ -2,10 +2,10 @@
 
 namespace Scraper\Scraper\Request;
 
-interface RequestHeaders
+interface RequestQuery
 {
     /**
      * @return array<string, string>
      */
-    public function getHeaders(): array;
+    public function getQuery(): array;
 }

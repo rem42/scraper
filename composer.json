@@ -24,6 +24,9 @@
     "ext-soap": "If you need to support Soap request"
   },
   "autoload": {
+    "psr-0": {
+      "Scraper\\Scraper\\": "src/"
+    },
     "psr-4": {
       "Scraper\\Scraper\\": "src/"
     }
