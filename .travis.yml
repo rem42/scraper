@@ -18,16 +18,14 @@ jobs:
   include:
     - stage: Tests
       name: PHPStan
-      script: "composer run-script static-analysis"
-    - script: "composer run-script code-style-check"
+      script: composer run-script static-analysis
+    - script: composer run-script code-style-check
       name: PHP CS-FIXER
-    - script: "composer run-script rector-check"
+    - script: composer run-script rector-check
       name: RECTOR
-    - script: "composer run-script unit-test"
+    - script: composer run-script unit-test
+      after_script: ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
       name: UNIT-TESTS
 
 after_success:
   - travis_retry php bin/php-coveralls
-
-after_script:
-  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
