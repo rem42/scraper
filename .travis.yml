@@ -16,6 +16,8 @@ before_script:
 
 jobs:
   include:
+    - stage: Build
+      script: composer install --no-interaction
     - stage: Tests
       name: PHPStan
       script: composer run-script static-analysis
@@ -26,6 +28,10 @@ jobs:
     - script: composer run-script unit-test
       after_script: ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
       name: UNIT-TESTS
+
+stages:
+  - Build
+  - Tests
 
 after_success:
   - travis_retry php bin/php-coveralls
