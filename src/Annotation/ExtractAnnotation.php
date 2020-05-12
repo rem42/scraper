@@ -74,10 +74,31 @@ final class ExtractAnnotation
                     $value        = str_replace('{' . $match . '}', $requestValue, $value);
                 }
             }
+
+            if ('path' === $property) {
+                $this->handlePath($scraper, $value);
+                continue;
+            }
+
             $scraper->$property = $value;
         }
 
         $this->scraperAnnotation = $scraper;
+    }
+
+    private function handlePath(Scraper $scraper, ?string $path = null): void
+    {
+        if (null === $path) {
+            return;
+        }
+
+        if (strlen($path) > 0 && '/' === $path[0]) {
+            $scraper->path = $path;
+        } elseif (isset($scraper->path)) {
+            $scraper->path = rtrim($scraper->path, '/') . '/' . ltrim($path, '/');
+        } else {
+            $scraper->path = $path;
+        }
     }
 
     private function getScraperAnnotation(): Scraper

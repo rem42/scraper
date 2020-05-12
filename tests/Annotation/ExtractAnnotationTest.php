@@ -5,6 +5,8 @@ namespace Scraper\Scraper\Tests\Annotation;
 use PHPUnit\Framework\TestCase;
 use Scraper\Scraper\Annotation\ExtractAnnotation;
 use Scraper\Scraper\Exception\ClassNotInitializedException;
+use Scraper\Scraper\Tests\Fixtures\TestChildChangePathRequest;
+use Scraper\Scraper\Tests\Fixtures\TestChildRequest;
 use Scraper\Scraper\Tests\Fixtures\TestRequest;
 use Scraper\Scraper\Tests\Fixtures\TestWithAnnotationParametersRequest;
 use Scraper\Scraper\Tests\Fixtures\TestWithoutAnnotationRequest;
@@ -48,5 +50,23 @@ final class ExtractAnnotationTest extends TestCase
         $this->expectException(ClassNotInitializedException::class);
 
         ExtractAnnotation::extract($request);
+    }
+
+    public function testExtractRequestWithParentRequest(): void
+    {
+        $request = new TestChildRequest();
+
+        $scraper = ExtractAnnotation::extract($request);
+
+        $this->assertEquals('path/to/endpoint/add/child/path', $scraper->path);
+    }
+
+    public function testExtractRequestWithParentAndChangePathRequest(): void
+    {
+        $request = new TestChildChangePathRequest();
+
+        $scraper = ExtractAnnotation::extract($request);
+
+        $this->assertEquals('/add/child/path', $scraper->path);
     }
 }
