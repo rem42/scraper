@@ -15,11 +15,11 @@
     "symfony/serializer-pack": "^1.0"
   },
   "require-dev": {
-    "rector/rector": "^0.7.16",
+    "rector/rector": "0.7.*",
     "rem42/php-cs-fixer-config": "^1.0",
     "phpstan/phpstan": "0.12.*",
-    "phpunit/phpunit": "^9",
-    "php-coveralls/php-coveralls": "^2.2"
+    "phpunit/phpunit": "9.*",
+    "php-coveralls/php-coveralls": "2.*"
   },
   "suggest": {
     "ext-json": "If you need to support JSON format",
