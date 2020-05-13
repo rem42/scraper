@@ -12,7 +12,7 @@ use Doctrine\Common\Annotations\Annotation\Target;
 final class Scraper
 {
     /** @Enum({"HTTP", "HTTPS"}) */
-    public string $scheme = 'HTTPS';
+    public string $scheme;
     public string $host;
     public int $port;
     public string $path;
