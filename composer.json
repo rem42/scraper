@@ -13,7 +13,7 @@
     "doctrine/common": "^2.8",
     "symfony/dom-crawler": "^4.4",
     "php-http/guzzle6-adapter": "^1.1",
-    "jms/serializer-bundle": "^2.0"
+    "jms/serializer-bundle": "^2.0 || ^3.0"
   },
   "suggest": {
     "ext-json": "If you need to support JSON format",
