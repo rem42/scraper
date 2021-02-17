@@ -17,7 +17,7 @@ final class ExtractAnnotation
 
     public function __construct(AnnotationReader $reader, ScraperRequest $request)
     {
-        $this->reflexionClass    = new \ReflectionClass(get_class($request));
+        $this->reflexionClass    = new \ReflectionClass(\get_class($request));
         $this->reader            = $reader;
         $this->request           = $request;
         $this->scraperAnnotation = new Scraper();
@@ -33,9 +33,9 @@ final class ExtractAnnotation
     }
 
     /**
-     * @param \ReflectionClass<ScraperRequest>|null $reflectionClass
+     * @param null|\ReflectionClass<ScraperRequest> $reflectionClass
      */
-    private function recursive(\ReflectionClass $reflectionClass =  null): void
+    private function recursive(\ReflectionClass $reflectionClass = null): void
     {
         if (null === $reflectionClass) {
             $reflectionClass = $this->reflexionClass;
@@ -61,7 +61,7 @@ final class ExtractAnnotation
         $vars = get_object_vars($this->scraperAnnotation);
         // Initializing class properties
         foreach ($vars as $property => $value) {
-            $scraper->$property = $value;
+            $scraper->{$property} = $value;
         }
 
         $vars = get_object_vars($annotation);
@@ -70,7 +70,7 @@ final class ExtractAnnotation
             if (preg_match_all('#{(.*?)}#', $value, $matchs)) {
                 foreach ($matchs[1] as $match) {
                     $method       = 'get' . ucfirst($match);
-                    $requestValue = $this->request->$method();
+                    $requestValue = $this->request->{$method}();
                     $value        = str_replace('{' . $match . '}', $requestValue, $value);
                 }
             }
@@ -80,7 +80,7 @@ final class ExtractAnnotation
                 continue;
             }
 
-            $scraper->$property = $value;
+            $scraper->{$property} = $value;
         }
 
         $this->scraperAnnotation = $scraper;
@@ -92,7 +92,7 @@ final class ExtractAnnotation
             return;
         }
 
-        if (strlen($path) > 0 && '/' === $path[0]) {
+        if (\strlen($path) > 0 && '/' === $path[0]) {
             $scraper->path = $path;
         } elseif (isset($scraper->path)) {
             $scraper->path = rtrim($scraper->path, '/') . '/' . ltrim($path, '/');

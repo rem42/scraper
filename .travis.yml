@@ -21,8 +21,6 @@ jobs:
       script: composer run-script static-analysis
     - script: composer run-script code-style-check
       name: PHP CS-FIXER
-    - script: composer run-script rector-check
-      name: RECTOR
     - script: composer run-script unit-test
       after_script: ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
       name: UNIT-TESTS

@@ -20,7 +20,7 @@ Installation
 ------------
 
 ````bash
-$ composer require rem42/scraper "2.x-dev"
+composer require rem42/scraper "2.x-dev"
 ````
 
 Requirement

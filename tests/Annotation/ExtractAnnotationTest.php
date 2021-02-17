@@ -11,6 +11,9 @@ use Scraper\Scraper\Tests\Fixtures\TestRequest;
 use Scraper\Scraper\Tests\Fixtures\TestWithAnnotationParametersRequest;
 use Scraper\Scraper\Tests\Fixtures\TestWithoutAnnotationRequest;
 
+/**
+ * @internal
+ */
 final class ExtractAnnotationTest extends TestCase
 {
     public function testExtractRequest(): void

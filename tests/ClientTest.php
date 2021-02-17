@@ -14,6 +14,9 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 use Symfony\Contracts\HttpClient\ResponseStreamInterface;
 
+/**
+ * @internal
+ */
 final class ClientTest extends TestCase
 {
     public function testSend(): void
@@ -32,7 +35,7 @@ final class ClientTest extends TestCase
 
         $result = $client->send($request);
 
-        $this->assertEquals(true, $result);
+        $this->assertTrue($result);
     }
 
     public function testResponseWithException(): void
@@ -45,10 +48,9 @@ final class ClientTest extends TestCase
         $client = new Client($httpClient);
 
         $request = new TestRequest();
-        //$this->expectException(ServerExceptionInterface::class);
         $this->expectException(\Exception::class);
 
-        $result = $client->send($request);
+        $client->send($request);
     }
 
     public function testWithAllOptions(): void
@@ -135,7 +137,7 @@ final class ClientTest extends TestCase
 
         $client = new Client($httpClient);
 
-        $reflection = new \ReflectionClass(get_class($client));
+        $reflection = new \ReflectionClass(\get_class($client));
         $method     = $reflection->getMethod('getApiReflectionClass');
         $method->setAccessible(true);
 
