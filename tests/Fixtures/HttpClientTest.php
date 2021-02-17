@@ -6,6 +6,10 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 use Symfony\Contracts\HttpClient\ResponseStreamInterface;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 final class HttpClientTest implements HttpClientInterface
 {
     private ResponseInterface $response;

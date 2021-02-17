@@ -5,7 +5,7 @@ namespace Scraper\Scraper\Api;
 interface ApiInterface
 {
     /**
-     * @return object|array<object>|bool
+     * @return array<object>|bool|object
      */
     public function execute();
 }

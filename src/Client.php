@@ -24,12 +24,12 @@ final class Client
     }
 
     /**
-     * @return object|array<object>|bool
+     * @return array<object>|bool|object
      */
     public function send(ScraperRequest $request)
     {
-        $this->request    = $request;
-        $annotation       = ExtractAnnotation::extract($this->request);
+        $this->request = $request;
+        $annotation    = ExtractAnnotation::extract($this->request);
 
         $options = [];
 
