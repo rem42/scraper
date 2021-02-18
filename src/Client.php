@@ -49,6 +49,12 @@ final class Client
             $options['auth_bearer'] = $this->request->getBearer();
         }
 
+        $throw = true;
+
+        if ($this->request instanceof RequestException) {
+            $throw = $this->request->isThrow();
+        }
+
         try {
             $response = $this->httpClient->request(
                 $annotation->method,
@@ -56,11 +62,11 @@ final class Client
                 $options
             );
 
-            if ($response->getStatusCode() >= 300 || $response->getStatusCode() < 200) {
-                throw new \Exception($response->getContent());
+            if ($throw && ($response->getStatusCode() >= 300 || $response->getStatusCode() < 200)) {
+                throw new ScraperException($response->getContent(false));
             }
         } catch (ServerExceptionInterface $serverExceptionInterface) {
-            throw new \Exception('cannot get response from: ' . $annotation->url(), $serverExceptionInterface->getCode(), $serverExceptionInterface);
+            throw new ScraperException('cannot get response from: ' . $annotation->url(), $serverExceptionInterface->getCode(), $serverExceptionInterface);
         }
 
         $apiReflectionClass = $this->getApiReflectionClass();
@@ -86,7 +92,7 @@ final class Client
         $apiClass = str_replace('Request', 'Api', $requestReflectionClass->getName());
 
         if (!class_exists($apiClass)) {
-            throw new \Exception('Api class for this request not exist: ' . $apiClass);
+            throw new ScraperException('Api class for this request not exist: ' . $apiClass);
         }
 
         return new \ReflectionClass($apiClass);
