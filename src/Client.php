@@ -4,8 +4,11 @@ namespace Scraper\Scraper;
 
 use Scraper\Scraper\Annotation\ExtractAnnotation;
 use Scraper\Scraper\Api\AbstractApi;
+use Scraper\Scraper\Exception\ScraperException;
 use Scraper\Scraper\Request\RequestBearer;
 use Scraper\Scraper\Request\RequestBody;
+use Scraper\Scraper\Request\RequestBodyJson;
+use Scraper\Scraper\Request\RequestException;
 use Scraper\Scraper\Request\RequestHeaders;
 use Scraper\Scraper\Request\RequestQuery;
 use Scraper\Scraper\Request\ScraperRequest;
@@ -43,6 +46,10 @@ final class Client
 
         if ($this->request instanceof RequestBody) {
             $options['body'] = $this->request->getBody();
+        }
+
+        if ($this->request instanceof RequestBodyJson) {
+            $options['json'] = $this->request->getJson();
         }
 
         if ($this->request instanceof RequestBearer) {
