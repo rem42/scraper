@@ -6,8 +6,8 @@ use PHPUnit\Framework\TestCase;
 use Scraper\Scraper\Api\AbstractApi;
 use Scraper\Scraper\Client;
 use Scraper\Scraper\Tests\Fixtures\HttpClientTest;
-use Scraper\Scraper\Tests\Fixtures\TestApi;
-use Scraper\Scraper\Tests\Fixtures\TestRequest;
+use Scraper\Scraper\Tests\Fixtures\TestApiAuth;
+use Scraper\Scraper\Tests\Fixtures\TestRequestAuth;
 use Scraper\Scraper\Tests\Fixtures\TestWithoutApiFileRequest;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -31,7 +31,7 @@ final class ClientTest extends TestCase
         ;
         $client = new Client($httpClient);
 
-        $request = new TestRequest();
+        $request = new TestRequestAuth();
 
         $result = $client->send($request);
 
@@ -47,7 +47,7 @@ final class ClientTest extends TestCase
         ;
         $client = new Client($httpClient);
 
-        $request = new TestRequest();
+        $request = new TestRequestAuth();
         $this->expectException(\Exception::class);
 
         $client->send($request);
@@ -64,7 +64,7 @@ final class ClientTest extends TestCase
 
         $client = new Client($httpClient);
 
-        $request = new TestRequest();
+        $request = new TestRequestAuth();
 
         $client->send($request);
 
@@ -101,7 +101,7 @@ final class ClientTest extends TestCase
 
         $client = new Client($httpClient);
 
-        $request = new TestRequest();
+        $request = new TestRequestAuth();
         $this->expectException(\Exception::class);
 
         $client->send($request);
@@ -141,13 +141,13 @@ final class ClientTest extends TestCase
         $method     = $reflection->getMethod('getApiReflectionClass');
         $method->setAccessible(true);
 
-        $request = new TestRequest();
+        $request = new TestRequestAuth();
         $client->send($request);
 
         /** @var \ReflectionClass $reflectionClass */
         $reflectionClass = $method->invokeArgs($client, []);
 
-        $this->assertEquals(TestApi::class, $reflectionClass->name);
+        $this->assertEquals(TestApiAuth::class, $reflectionClass->name);
         $this->assertEquals(AbstractApi::class, $reflectionClass->getParentClass()->name);
     }
 }

@@ -5,7 +5,8 @@ namespace Scraper\Scraper;
 use Scraper\Scraper\Annotation\ExtractAnnotation;
 use Scraper\Scraper\Api\AbstractApi;
 use Scraper\Scraper\Exception\ScraperException;
-use Scraper\Scraper\Request\RequestBearer;
+use Scraper\Scraper\Request\RequestAuthBasic;
+use Scraper\Scraper\Request\RequestAuthBearer;
 use Scraper\Scraper\Request\RequestBody;
 use Scraper\Scraper\Request\RequestBodyJson;
 use Scraper\Scraper\Request\RequestException;
@@ -36,6 +37,14 @@ final class Client
 
         $options = [];
 
+        if ($this->request instanceof RequestAuthBearer) {
+            $options['auth_bearer'] = $this->request->getBearer();
+        }
+
+        if ($this->request instanceof RequestAuthBasic) {
+            $options['auth_basic'] = $this->request->getAuthBasic();
+        }
+
         if ($this->request instanceof RequestHeaders) {
             $options['headers'] = $this->request->getHeaders();
         }
@@ -50,10 +59,6 @@ final class Client
 
         if ($this->request instanceof RequestBodyJson) {
             $options['json'] = $this->request->getJson();
-        }
-
-        if ($this->request instanceof RequestBearer) {
-            $options['auth_bearer'] = $this->request->getBearer();
         }
 
         $throw = true;

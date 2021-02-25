@@ -2,7 +2,7 @@
 
 namespace Scraper\Scraper\Request;
 
-interface RequestBearer
+interface RequestAuthBearer
 {
     public function getBearer(): string;
 }
