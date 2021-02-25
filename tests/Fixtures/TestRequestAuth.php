@@ -3,16 +3,16 @@
 namespace Scraper\Scraper\Tests\Fixtures;
 
 use Scraper\Scraper\Annotation\Scraper;
-use Scraper\Scraper\Request\RequestBearer;
+use Scraper\Scraper\Request\RequestAuthBearer;
 use Scraper\Scraper\Request\RequestBody;
 use Scraper\Scraper\Request\RequestHeaders;
 use Scraper\Scraper\Request\RequestQuery;
 use Scraper\Scraper\Request\ScraperRequest;
 
 /**
- * @Scraper(host="host-test.api", path="path/to/endpoint", method="GET", scheme="HTTPS", port="443")
+ * @Scraper(host="host-test.api", path="path/to/endpoint", method="GET", scheme="HTTPS")
  */
-final class TestRequest extends ScraperRequest implements RequestBearer, RequestBody, RequestHeaders, RequestQuery
+final class TestRequestAuth extends ScraperRequest implements RequestAuthBearer, RequestBody, RequestHeaders, RequestQuery
 {
     public function getBearer(): string
     {

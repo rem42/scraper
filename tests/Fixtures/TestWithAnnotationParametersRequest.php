@@ -6,7 +6,7 @@ use Scraper\Scraper\Annotation\Scraper;
 use Scraper\Scraper\Request\ScraperRequest;
 
 /**
- * @Scraper(host="host-test.{ndd}", path="path/to/{endpoint}", method="GET", scheme="HTTPS", port="443")
+ * @Scraper(host="host-test.{ndd}", path="path/to/{endpoint}", method="GET", scheme="HTTPS")
  */
 final class TestWithAnnotationParametersRequest extends ScraperRequest
 {

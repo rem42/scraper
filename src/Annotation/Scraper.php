@@ -14,14 +14,10 @@ final class Scraper
     /** @Enum({"HTTP", "HTTPS"}) */
     public string $scheme;
     public string $host;
-    public int $port;
     public string $path;
 
     /** @Enum({"POST", "GET", "PUT"}) */
     public string $method;
-    public string $contentType;
-    /** @Enum("SOAP")  */
-    public string $protocol;
 
     public function url(): string
     {

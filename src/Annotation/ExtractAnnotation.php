@@ -106,6 +106,15 @@ final class ExtractAnnotation
         if (!$this->hasScraperAnnotation) {
             throw new ClassNotInitializedException('Class Scraper not found in Request class');
         }
+
+        if (true === $this->request->isSsl()) {
+            $this->scraperAnnotation->scheme = 'HTTPS';
+        }
+
+        if (false === $this->request->isSsl()) {
+            $this->scraperAnnotation->scheme = 'HTTP';
+        }
+
         return $this->scraperAnnotation;
     }
 }

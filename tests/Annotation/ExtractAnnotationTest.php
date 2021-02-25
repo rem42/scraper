@@ -7,7 +7,7 @@ use Scraper\Scraper\Annotation\ExtractAnnotation;
 use Scraper\Scraper\Exception\ClassNotInitializedException;
 use Scraper\Scraper\Tests\Fixtures\TestChildChangePathRequest;
 use Scraper\Scraper\Tests\Fixtures\TestChildRequest;
-use Scraper\Scraper\Tests\Fixtures\TestRequest;
+use Scraper\Scraper\Tests\Fixtures\TestRequestAuth;
 use Scraper\Scraper\Tests\Fixtures\TestWithAnnotationParametersRequest;
 use Scraper\Scraper\Tests\Fixtures\TestWithoutAnnotationRequest;
 
@@ -18,7 +18,7 @@ final class ExtractAnnotationTest extends TestCase
 {
     public function testExtractRequest(): void
     {
-        $request = new TestRequest();
+        $request = new TestRequestAuth();
 
         $scraper = ExtractAnnotation::extract($request);
 
@@ -26,7 +26,6 @@ final class ExtractAnnotationTest extends TestCase
         $this->assertEquals('host-test.api', $scraper->host);
         $this->assertEquals('path/to/endpoint', $scraper->path);
         $this->assertEquals('GET', $scraper->method);
-        $this->assertEquals(443, $scraper->port);
     }
 
     public function testExtractRequestWithParameters(): void
@@ -43,7 +42,6 @@ final class ExtractAnnotationTest extends TestCase
         $this->assertEquals('host-test.fr', $scraper->host);
         $this->assertEquals('path/to/my-endpoint', $scraper->path);
         $this->assertEquals('GET', $scraper->method);
-        $this->assertEquals(443, $scraper->port);
     }
 
     public function testExtractRequestWithoutAnnotation(): void
@@ -71,5 +69,20 @@ final class ExtractAnnotationTest extends TestCase
         $scraper = ExtractAnnotation::extract($request);
 
         $this->assertEquals('/add/child/path', $scraper->path);
+    }
+
+    public function testDisableEnableSSL(): void
+    {
+        $request = new TestChildRequest();
+        $request->disableSSL();
+
+        $scraper = ExtractAnnotation::extract($request);
+
+        $this->assertEquals('HTTP', $scraper->scheme);
+        $request->enableSSL();
+
+        $scraper = ExtractAnnotation::extract($request);
+
+        $this->assertEquals('HTTPS', $scraper->scheme);
     }
 }
