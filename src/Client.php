@@ -28,7 +28,7 @@ final class Client
     }
 
     /**
-     * @return array<object>|bool|object
+     * @return array<object>|bool|object|string
      */
     public function send(ScraperRequest $request)
     {
