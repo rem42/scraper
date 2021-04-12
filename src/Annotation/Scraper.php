@@ -16,7 +16,7 @@ final class Scraper
     public string $host;
     public string $path;
 
-    /** @Enum({"POST", "GET", "PUT"}) */
+    /** @Enum({"GET", "POST", "PUT", "DELETE"}) */
     public string $method;
 
     public function url(): string
