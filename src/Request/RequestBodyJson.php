@@ -4,5 +4,8 @@ namespace Scraper\Scraper\Request;
 
 interface RequestBodyJson
 {
-    public function getJson(): string;
+    /**
+     * @return array<int|string, mixed>
+     */
+    public function getJson(): array;
 }
