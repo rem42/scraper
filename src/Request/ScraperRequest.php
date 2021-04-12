@@ -4,7 +4,8 @@ namespace Scraper\Scraper\Request;
 
 abstract class ScraperRequest
 {
-    private ?bool $ssl = null;
+    private ?bool $ssl       = null;
+    private ?bool $authBasic = null;
 
     public function enableSSL(): self
     {
@@ -23,5 +24,24 @@ abstract class ScraperRequest
     public function isSsl(): ?bool
     {
         return $this->ssl;
+    }
+
+    public function isAuthBasic(): ?bool
+    {
+        return $this->authBasic;
+    }
+
+    public function enableAuthBasic(): self
+    {
+        $this->authBasic = true;
+
+        return $this;
+    }
+
+    public function disableAuthBasic(): self
+    {
+        $this->authBasic = false;
+
+        return $this;
     }
 }
