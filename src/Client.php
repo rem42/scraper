@@ -41,7 +41,7 @@ final class Client
             $options['auth_bearer'] = $this->request->getBearer();
         }
 
-        if ($this->request instanceof RequestAuthBasic) {
+        if ($this->request instanceof RequestAuthBasic && false !== $this->request->isAuthBasic()) {
             $options['auth_basic'] = $this->request->getAuthBasic();
         }
 
