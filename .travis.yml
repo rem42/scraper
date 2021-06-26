@@ -1,0 +1,29 @@
+language: php
+php:
+  - '7.4'
+cache:
+  directories:
+    - $HOME/.composer/cache/files
+
+install:
+  - composer install --no-interaction
+  - mkdir -p build/logs
+
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+
+jobs:
+  include:
+    - stage: Tests
+      name: PHPStan
+      script: composer run-script static-analysis
+    - script: composer run-script code-style-check
+      name: PHP CS-FIXER
+    - script: composer run-script unit-test
+      after_script: ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+      name: UNIT-TESTS
+
+after_success:
+  - travis_retry php bin/php-coveralls
