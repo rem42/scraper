@@ -13,7 +13,6 @@ use Scraper\Scraper\Request\RequestException;
 use Scraper\Scraper\Request\RequestHeaders;
 use Scraper\Scraper\Request\RequestQuery;
 use Scraper\Scraper\Request\ScraperRequest;
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class Client
@@ -77,8 +76,12 @@ final class Client
             if ($throw && ($response->getStatusCode() >= 300 || $response->getStatusCode() < 200)) {
                 throw new ScraperException($response->getContent(false));
             }
-        } catch (ServerExceptionInterface $serverExceptionInterface) {
-            throw new ScraperException('cannot get response from: ' . $annotation->url(), $serverExceptionInterface->getCode(), $serverExceptionInterface);
+        } catch (\Throwable $serverExceptionInterface) {
+            throw new ScraperException(
+                'cannot get response from: ' . $annotation->url(),
+                \is_int($serverExceptionInterface->getCode()) ? $serverExceptionInterface->getCode() : 0,
+                $serverExceptionInterface
+            );
         }
 
         $apiReflectionClass = $this->getApiReflectionClass();

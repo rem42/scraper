@@ -66,6 +66,10 @@ final class ExtractAnnotation
 
         $vars = get_object_vars($annotation);
 
+        /**
+         * @var string $property
+         * @var string $value
+         */
         foreach ($vars as $property => $value) {
             if (preg_match_all('#{(.*?)}#', $value, $matchs)) {
                 foreach ($matchs[1] as $match) {
@@ -92,7 +96,7 @@ final class ExtractAnnotation
             return;
         }
 
-        if (\strlen($path) > 0 && '/' === $path[0]) {
+        if ('' !== $path && '/' === $path[0]) {
             $scraper->path = $path;
         } elseif (isset($scraper->path)) {
             $scraper->path = rtrim($scraper->path, '/') . '/' . ltrim($path, '/');
