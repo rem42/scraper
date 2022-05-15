@@ -34,6 +34,62 @@ final class Client
         $this->request = $request;
         $annotation    = ExtractAnnotation::extract($this->request);
 
+        $options = $this->buildOptions();
+
+        $throw = true;
+
+        if ($this->request instanceof RequestException) {
+            $throw = $this->request->isThrow();
+        }
+
+        try {
+            $response = $this->httpClient->request(
+                $annotation->method,
+                $annotation->url(),
+                $options
+            );
+
+            if ($throw && ($response->getStatusCode() >= 300 || $response->getStatusCode() < 200)) {
+                throw new ScraperException($response->getContent(false));
+            }
+        } catch (\Throwable $throwable) {
+            throw new ScraperException('cannot get response from: ' . $annotation->url(), \is_int($throwable->getCode()) ? $throwable->getCode() : 0, $throwable);
+        }
+
+        $apiReflectionClass = $this->getApiReflectionClass();
+
+        /** @var AbstractApi $apiInstance */
+        $apiInstance = $apiReflectionClass->newInstanceArgs([
+            $this->request,
+            $annotation,
+            $response,
+        ]);
+
+        return $apiInstance->execute();
+    }
+
+    /**
+     * @return \ReflectionClass<AbstractApi>
+     */
+    private function getApiReflectionClass(): \ReflectionClass
+    {
+        $class = new \ReflectionClass($this->request);
+
+        /** @var class-string<AbstractApi> $apiClass */
+        $apiClass = str_replace('Request', 'Api', $class->getName());
+
+        if (!class_exists($apiClass)) {
+            throw new ScraperException('Api class for this request not exist: ' . $apiClass);
+        }
+
+        return new \ReflectionClass($apiClass);
+    }
+
+    /**
+     * @return array<string, array<int|string,mixed>|resource|string>
+     */
+    public function buildOptions(): array
+    {
         $options = [];
 
         if ($this->request instanceof RequestAuthBearer) {
@@ -59,53 +115,6 @@ final class Client
         if ($this->request instanceof RequestBodyJson) {
             $options['json'] = $this->request->getJson();
         }
-
-        $throw = true;
-
-        if ($this->request instanceof RequestException) {
-            $throw = $this->request->isThrow();
-        }
-
-        try {
-            $response = $this->httpClient->request(
-                $annotation->method,
-                $annotation->url(),
-                $options
-            );
-
-            if ($throw && ($response->getStatusCode() >= 300 || $response->getStatusCode() < 200)) {
-                throw new ScraperException($response->getContent(false));
-            }
-        } catch (\Throwable $serverExceptionInterface) {
-            throw new ScraperException('cannot get response from: ' . $annotation->url(), \is_int($serverExceptionInterface->getCode()) ? $serverExceptionInterface->getCode() : 0, $serverExceptionInterface);
-        }
-
-        $apiReflectionClass = $this->getApiReflectionClass();
-
-        /** @var AbstractApi $apiInstance */
-        $apiInstance = $apiReflectionClass->newInstanceArgs([
-            $this->request,
-            $annotation,
-            $response,
-        ]);
-
-        return $apiInstance->execute();
-    }
-
-    /**
-     * @return \ReflectionClass<AbstractApi>
-     */
-    private function getApiReflectionClass(): \ReflectionClass
-    {
-        $requestReflectionClass = new \ReflectionClass($this->request);
-
-        /** @var class-string<AbstractApi> $apiClass */
-        $apiClass = str_replace('Request', 'Api', $requestReflectionClass->getName());
-
-        if (!class_exists($apiClass)) {
-            throw new ScraperException('Api class for this request not exist: ' . $apiClass);
-        }
-
-        return new \ReflectionClass($apiClass);
+        return $options;
     }
 }
