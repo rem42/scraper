@@ -33,7 +33,7 @@ final class ExtractAnnotation
     }
 
     /**
-     * @param null|\ReflectionClass<ScraperRequest> $reflectionClass
+     * @param \ReflectionClass<ScraperRequest>|null $reflectionClass
      */
     private function recursive(\ReflectionClass $reflectionClass = null): void
     {

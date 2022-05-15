@@ -77,11 +77,7 @@ final class Client
                 throw new ScraperException($response->getContent(false));
             }
         } catch (\Throwable $serverExceptionInterface) {
-            throw new ScraperException(
-                'cannot get response from: ' . $annotation->url(),
-                \is_int($serverExceptionInterface->getCode()) ? $serverExceptionInterface->getCode() : 0,
-                $serverExceptionInterface
-            );
+            throw new ScraperException('cannot get response from: ' . $annotation->url(), \is_int($serverExceptionInterface->getCode()) ? $serverExceptionInterface->getCode() : 0, $serverExceptionInterface);
         }
 
         $apiReflectionClass = $this->getApiReflectionClass();
