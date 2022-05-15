@@ -16,7 +16,7 @@
   },
   "require-dev": {
     "rem42/php-cs-fixer-config": "^3.0",
-    "phpstan/phpstan": "^1.0",
+    "phpstan/phpstan": "1.6.8",
     "phpunit/phpunit": "^9.5"
   },
   "suggest": {
