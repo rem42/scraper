@@ -33,14 +33,9 @@ final class Client
     {
         $this->request = $request;
         $annotation    = ExtractAnnotation::extract($this->request);
+        $options       = $this->buildOptions();
 
-        $options = $this->buildOptions();
-
-        $throw = true;
-
-        if ($this->request instanceof RequestException) {
-            $throw = $this->request->isThrow();
-        }
+        $throw = $this->isThrow();
 
         try {
             $response = $this->httpClient->request(
@@ -88,7 +83,7 @@ final class Client
     /**
      * @return array<string, array<int|string,mixed>|resource|string>
      */
-    public function buildOptions(): array
+    private function buildOptions(): array
     {
         $options = [];
 
@@ -116,5 +111,15 @@ final class Client
             $options['json'] = $this->request->getJson();
         }
         return $options;
+    }
+
+    private function isThrow(): bool
+    {
+        $throw = true;
+
+        if ($this->request instanceof RequestException) {
+            $throw = $this->request->isThrow();
+        }
+        return $throw;
     }
 }

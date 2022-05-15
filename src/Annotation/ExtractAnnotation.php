@@ -120,13 +120,7 @@ final class ExtractAnnotation
          * @var string $value
          */
         foreach ($vars as $property => $value) {
-            if (preg_match_all('#{(.*?)}#', $value, $matchs)) {
-                foreach ($matchs[1] as $match) {
-                    $method       = 'get' . ucfirst($match);
-                    $requestValue = $this->request->{$method}();
-                    $value        = str_replace('{' . $match . '}', $requestValue, $value);
-                }
-            }
+            $value = $this->replaceVariableInValue($value);
 
             if ('path' === $property) {
                 $this->handlePath($scraper, $value);
@@ -135,5 +129,17 @@ final class ExtractAnnotation
 
             $scraper->{$property} = $value;
         }
+    }
+
+    public function replaceVariableInValue(string $value): string
+    {
+        if (preg_match_all('#{(.*?)}#', $value, $matchs)) {
+            foreach ($matchs[1] as $match) {
+                $method       = 'get' . ucfirst($match);
+                $requestValue = $this->request->{$method}();
+                $value        = str_replace('{' . $match . '}', $requestValue, $value);
+            }
+        }
+        return $value;
     }
 }
