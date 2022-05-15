@@ -58,14 +58,63 @@ final class ExtractAnnotation
     {
         $scraper = new Scraper();
 
+        $this->initDefaultValues($scraper);
+
+        $vars = get_object_vars($annotation);
+        $this->extractChildValues($scraper, $vars);
+
+        $this->scraperAnnotation = $scraper;
+    }
+
+    private function handlePath(Scraper $scraper, ?string $path = null): void
+    {
+        if (null === $path) {
+            return;
+        }
+
+        if ('' !== $path && '/' === $path[0]) {
+            $scraper->path = $path;
+            return;
+        }
+
+        if (isset($scraper->path)) {
+            $scraper->path = rtrim($scraper->path, '/') . '/' . ltrim($path, '/');
+            return;
+        }
+        $scraper->path = $path;
+    }
+
+    private function getScraperAnnotation(): Scraper
+    {
+        if (!$this->hasScraperAnnotation) {
+            throw new ClassNotInitializedException('Class Scraper not found in Request class');
+        }
+
+        if (true === $this->request->isSsl()) {
+            $this->scraperAnnotation->scheme = 'HTTPS';
+        }
+
+        if (false === $this->request->isSsl()) {
+            $this->scraperAnnotation->scheme = 'HTTP';
+        }
+
+        return $this->scraperAnnotation;
+    }
+
+    private function initDefaultValues(Scraper $scraper): void
+    {
         $vars = get_object_vars($this->scraperAnnotation);
         // Initializing class properties
         foreach ($vars as $property => $value) {
             $scraper->{$property} = $value;
         }
+    }
 
-        $vars = get_object_vars($annotation);
-
+    /**
+     * @param array<string, mixed> $vars
+     */
+    private function extractChildValues(Scraper $scraper, array $vars): void
+    {
         /**
          * @var string $property
          * @var string $value
@@ -86,39 +135,5 @@ final class ExtractAnnotation
 
             $scraper->{$property} = $value;
         }
-
-        $this->scraperAnnotation = $scraper;
-    }
-
-    private function handlePath(Scraper $scraper, ?string $path = null): void
-    {
-        if (null === $path) {
-            return;
-        }
-
-        if ('' !== $path && '/' === $path[0]) {
-            $scraper->path = $path;
-        } elseif (isset($scraper->path)) {
-            $scraper->path = rtrim($scraper->path, '/') . '/' . ltrim($path, '/');
-        } else {
-            $scraper->path = $path;
-        }
-    }
-
-    private function getScraperAnnotation(): Scraper
-    {
-        if (!$this->hasScraperAnnotation) {
-            throw new ClassNotInitializedException('Class Scraper not found in Request class');
-        }
-
-        if (true === $this->request->isSsl()) {
-            $this->scraperAnnotation->scheme = 'HTTPS';
-        }
-
-        if (false === $this->request->isSsl()) {
-            $this->scraperAnnotation->scheme = 'HTTP';
-        }
-
-        return $this->scraperAnnotation;
     }
 }
