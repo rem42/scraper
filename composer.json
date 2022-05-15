@@ -15,9 +15,9 @@
     "symfony/serializer-pack": "^1.0"
   },
   "require-dev": {
-    "rem42/php-cs-fixer-config": "^3.0",
+    "rem42/php-cs-fixer-config": "3.1.0",
     "phpstan/phpstan": "^1.0",
-    "phpunit/phpunit": "^9.5"
+    "phpunit/phpunit": "9.5.20"
   },
   "suggest": {
     "ext-json": "If you need to support JSON format",
