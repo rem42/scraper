@@ -11,7 +11,7 @@
   ],
   "require": {
     "php": "^7.4|^8.0",
-    "symfony/http-client-contracts": "^2.0",
+    "symfony/http-client-contracts": "^3.0",
     "symfony/serializer-pack": "^1.0"
   },
   "require-dev": {
