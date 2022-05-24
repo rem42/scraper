@@ -19,11 +19,9 @@ final class Client
 {
     private ScraperRequest $request;
 
-    private HttpClientInterface $httpClient;
-
-    public function __construct(HttpClientInterface $httpClient)
-    {
-        $this->httpClient = $httpClient;
+    public function __construct(
+        protected HttpClientInterface $httpClient
+    ) {
     }
 
     /**

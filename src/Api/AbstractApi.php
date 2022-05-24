@@ -10,17 +10,13 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 
 abstract class AbstractApi implements ApiInterface
 {
-    protected ScraperRequest $request;
-    protected Scraper $scraper;
-    protected ResponseInterface $response;
     protected Serializer $serializer;
 
-    public function __construct(ScraperRequest $request, Scraper $scraper, ResponseInterface $response)
-    {
-        $this->request  = $request;
-        $this->scraper  = $scraper;
-        $this->response = $response;
-
+    public function __construct(
+        protected ScraperRequest $request,
+        protected Scraper $scraper,
+        protected ResponseInterface $response
+    ) {
         $this->serializer = SerializerFactory::create();
     }
 }
