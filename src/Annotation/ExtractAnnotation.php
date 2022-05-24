@@ -10,16 +10,14 @@ final class ExtractAnnotation
 {
     /** @var \ReflectionClass<ScraperRequest> */
     private \ReflectionClass $reflexionClass;
-    private AnnotationReader $reader;
-    private ScraperRequest $request;
     private Scraper $scraperAnnotation;
     private bool $hasScraperAnnotation = false;
 
-    public function __construct(AnnotationReader $reader, ScraperRequest $request)
-    {
+    public function __construct(
+        protected AnnotationReader $reader,
+        protected ScraperRequest $request
+    ) {
         $this->reflexionClass    = new \ReflectionClass(\get_class($request));
-        $this->reader            = $reader;
-        $this->request           = $request;
         $this->scraperAnnotation = new Scraper();
     }
 

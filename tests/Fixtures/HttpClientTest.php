@@ -12,14 +12,12 @@ use Symfony\Contracts\HttpClient\ResponseStreamInterface;
  */
 final class HttpClientTest implements HttpClientInterface
 {
-    private ResponseInterface $response;
-    private ResponseStreamInterface $responseStream;
     private array $options;
 
-    public function __construct(ResponseInterface $response, ResponseStreamInterface $responseStream)
-    {
-        $this->response       = $response;
-        $this->responseStream = $responseStream;
+    public function __construct(
+        protected ResponseInterface $response,
+        protected ResponseStreamInterface $responseStream
+    ) {
     }
 
     /**
@@ -39,5 +37,15 @@ final class HttpClientTest implements HttpClientInterface
     public function stream($responses, float $timeout = null): ResponseStreamInterface
     {
         return $this->responseStream;
+    }
+
+    public function withOptions(array $options): static
+    {
+        $self = new self(
+            $this->response,
+            $this->responseStream
+        );
+        $self->options = $options;
+        return $self;
     }
 }

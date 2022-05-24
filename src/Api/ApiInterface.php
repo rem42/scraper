@@ -7,5 +7,5 @@ interface ApiInterface
     /**
      * @return array<object>|bool|object|string
      */
-    public function execute();
+    public function execute(): object|array|bool|string;
 }
