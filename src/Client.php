@@ -21,8 +21,7 @@ final class Client
 
     public function __construct(
         protected HttpClientInterface $httpClient
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<object>|bool|object|string
@@ -79,7 +78,7 @@ final class Client
     }
 
     /**
-     * @return array<string, array<int|string,mixed>|resource|string>
+     * @return array<string, array<int|string, mixed>|resource|string>
      */
     private function buildOptions(): array
     {

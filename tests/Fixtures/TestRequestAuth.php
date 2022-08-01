@@ -25,7 +25,7 @@ final class TestRequestAuth extends ScraperRequest implements RequestAuthBearer,
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
     public function getHeaders(): array
     {
@@ -35,7 +35,7 @@ final class TestRequestAuth extends ScraperRequest implements RequestAuthBearer,
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
     public function getQuery(): array
     {

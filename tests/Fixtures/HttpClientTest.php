@@ -17,11 +17,10 @@ final class HttpClientTest implements HttpClientInterface
     public function __construct(
         protected ResponseInterface $response,
         protected ResponseStreamInterface $responseStream
-    ) {
-    }
+    ) {}
 
     /**
-     * @return mixed[]
+     * @return array<mixed>
      */
     public function getOptions(): array
     {
