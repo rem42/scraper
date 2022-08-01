@@ -134,7 +134,7 @@ final class ExtractAnnotation
         if (preg_match_all('#{(.*?)}#', $value, $matchs)) {
             foreach ($matchs[1] as $match) {
                 $method       = 'get' . ucfirst($match);
-                $requestValue = $this->request->{$method}();
+                $requestValue = (string) $this->request->{$method}();
                 $value        = str_replace('{' . $match . '}', $requestValue, $value);
             }
         }
