@@ -15,7 +15,7 @@
     "symfony/serializer-pack": "^1.1"
   },
   "require-dev": {
-    "rem42/php-cs-fixer-config": "^3.1",
+    "rem42/php-cs-fixer-config": "^3.3",
     "phpstan/phpstan": "^1.0",
     "phpunit/phpunit": "^9.5"
   },

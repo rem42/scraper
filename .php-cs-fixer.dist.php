@@ -1,7 +1,11 @@
 <?php
 
 $config = new Rem42\CS\Config\Config;
-$config->getFinder()
+$config
+    ->addMoreRules([
+        'declare_strict_types' => true,
+    ])
+    ->getFinder()
     ->in(
         [
             __DIR__.'/src',
