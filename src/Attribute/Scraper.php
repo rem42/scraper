@@ -33,10 +33,10 @@ final class Scraper
         if (!$this->host) {
             throw new ScraperException('host is required');
         }
-        $url .= $this->host;
+        $url .= rtrim($this->host, '/') . '/';
 
         if ($this->path) {
-            $url .= $this->path;
+            $url .= '/' . ltrim($this->path, '/');
         }
         return $url;
     }

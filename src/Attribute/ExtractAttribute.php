@@ -98,6 +98,10 @@ final class ExtractAttribute
          * @var string $value
          */
         foreach ($vars as $property => $value) {
+            if (null === $value) {
+                continue;
+            }
+
             if (!\is_string($value)) {
                 $scraper->{$property} = $value;
                 continue;
