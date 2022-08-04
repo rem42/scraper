@@ -36,7 +36,7 @@ final class Scraper
         $url .= rtrim($this->host, '/') . '/';
 
         if ($this->path) {
-            $url .= '/' . ltrim($this->path, '/');
+            $url .= ltrim($this->path, '/');
         }
         return $url;
     }
