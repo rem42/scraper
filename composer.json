@@ -25,28 +25,19 @@
     "ext-soap": "If you need to support Soap request"
   },
   "autoload": {
-    "psr-0": {
-      "Scraper\\Scraper\\": "src/"
-    },
     "psr-4": {
       "Scraper\\Scraper\\": "src/"
     }
   },
   "autoload-dev": {
-    "psr-0": {
-      "Scraper\\Scraper\\Tests\\": "tests/"
-    },
     "psr-4": {
       "Scraper\\Scraper\\Tests\\": "tests/"
     }
   },
-  "config": {
-    "bin-dir": "bin/"
-  },
   "scripts": {
-    "static-analysis": "./bin/phpstan analyse src --level=max --no-progress -vvv",
-    "code-style-check": "./bin/php-cs-fixer fix --dry-run --verbose",
-    "code-style-fix": "./bin/php-cs-fixer fix",
-    "unit-test": "./bin/phpunit"
+    "static-analysis": "./vendor/bin/phpstan analyse src --level=max --no-progress -vvv",
+    "code-style-check": "./vendor/bin/php-cs-fixer fix --dry-run --verbose",
+    "code-style-fix": "./vendor/bin/php-cs-fixer fix",
+    "unit-test": "./vendor/bin/phpunit"
   }
 }
