@@ -93,10 +93,6 @@ final class ExtractAttribute
      */
     private function extractChildValues(Scraper $scraper, array $vars): void
     {
-        /**
-         * @var string $property
-         * @var string $value
-         */
         foreach ($vars as $property => $value) {
             if (null === $value) {
                 continue;
