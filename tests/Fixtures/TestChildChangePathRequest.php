@@ -2,11 +2,13 @@
 
 namespace Scraper\Scraper\Tests\Fixtures;
 
-use Scraper\Scraper\Annotation\Scraper;
+use Scraper\Scraper\Annotation\Scraper as ScraperAnnotation;
+use Scraper\Scraper\Attribute\Scraper;
 
 /**
- * @Scraper(path="/add/child/path")
+ * @ScraperAnnotation(path="/add/child/path")
  */
+#[Scraper(path: '/add/child/path')]
 final class TestChildChangePathRequest extends TestParentRequest
 {
 }

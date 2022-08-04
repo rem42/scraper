@@ -2,8 +2,8 @@
 
 namespace Scraper\Scraper;
 
-use Scraper\Scraper\Annotation\ExtractAnnotation;
 use Scraper\Scraper\Api\AbstractApi;
+use Scraper\Scraper\Attribute\ExtractAttribute;
 use Scraper\Scraper\Exception\ScraperException;
 use Scraper\Scraper\Request\RequestAuthBasic;
 use Scraper\Scraper\Request\RequestAuthBearer;
@@ -29,15 +29,15 @@ final class Client
     public function send(ScraperRequest $request)
     {
         $this->request = $request;
-        $annotation    = ExtractAnnotation::extract($this->request);
+        $attribute     = ExtractAttribute::extract($this->request);
         $options       = $this->buildOptions();
 
         $throw = $this->isThrow();
 
         try {
             $response = $this->httpClient->request(
-                $annotation->method,
-                $annotation->url(),
+                $attribute->getMethod(),
+                $attribute->url(),
                 $options
             );
 
@@ -45,7 +45,7 @@ final class Client
                 throw new ScraperException($response->getContent(false));
             }
         } catch (\Throwable $throwable) {
-            throw new ScraperException('cannot get response from: ' . $annotation->url(), \is_int($throwable->getCode()) ? $throwable->getCode() : 0, $throwable);
+            throw new ScraperException('cannot get response from: ' . $attribute->url(), \is_int($throwable->getCode()) ? $throwable->getCode() : 0, $throwable);
         }
 
         $apiReflectionClass = $this->getApiReflectionClass();
@@ -53,7 +53,7 @@ final class Client
         /** @var AbstractApi $apiInstance */
         $apiInstance = $apiReflectionClass->newInstanceArgs([
             $this->request,
-            $annotation,
+            $attribute,
             $response,
         ]);
 

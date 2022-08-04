@@ -2,7 +2,7 @@
 
 namespace Scraper\Scraper\Api;
 
-use Scraper\Scraper\Annotation\Scraper;
+use Scraper\Scraper\Attribute\Scraper;
 use Scraper\Scraper\Factory\SerializerFactory;
 use Scraper\Scraper\Request\ScraperRequest;
 use Symfony\Component\Serializer\Serializer;

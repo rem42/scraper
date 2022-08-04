@@ -1,33 +1,48 @@
 <?php declare(strict_types=1);
 
-namespace Scraper\Scraper\Annotation;
+namespace Scraper\Scraper\Attribute;
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use Scraper\Scraper\Exception\ClassNotInitializedException;
 use Scraper\Scraper\Request\ScraperRequest;
 
-final class ExtractAnnotation
+final class ExtractAttribute
 {
     /** @var \ReflectionClass<ScraperRequest> */
     private \ReflectionClass $reflexionClass;
-    private Scraper $scraperAnnotation;
-    private bool $hasScraperAnnotation = false;
+    private Scraper $scraperAttribute;
+    private bool $hasScraperAttribute = false;
 
     public function __construct(
-        protected AnnotationReader $reader,
         protected ScraperRequest $request
     ) {
-        $this->reflexionClass    = new \ReflectionClass(\get_class($request));
-        $this->scraperAnnotation = new Scraper();
+        $this->reflexionClass   = new \ReflectionClass($request::class);
+        $this->scraperAttribute = new Scraper();
     }
 
     public static function extract(ScraperRequest $request): Scraper
     {
-        $self = new self(new AnnotationReader(), $request);
+        $self = new self($request);
 
         $self->recursive();
 
         return $self->getScraperAnnotation();
+    }
+
+    private function getScraperAnnotation(): Scraper
+    {
+        if (!$this->hasScraperAttribute) {
+            throw new ClassNotInitializedException('Class Scraper not found in Request class');
+        }
+
+        if (true === $this->request->isSsl()) {
+            $this->scraperAttribute->scheme = Scheme::HTTPS;
+        }
+
+        if (false === $this->request->isSsl()) {
+            $this->scraperAttribute->scheme = Scheme::HTTP;
+        }
+
+        return $this->scraperAttribute;
     }
 
     /**
@@ -44,24 +59,70 @@ final class ExtractAnnotation
             $this->recursive($parentClass);
         }
 
-        $annotation = $this->reader->getClassAnnotation($reflectionClass, Scraper::class);
+        $attributes = $reflectionClass->getAttributes(Scraper::class);
 
-        if ($annotation instanceof Scraper) {
-            $this->hasScraperAnnotation = true;
-            $this->extractAnnotation($annotation);
+        if (1 === \count($attributes)) {
+            $this->hasScraperAttribute = true;
+            $this->extractAttribute($attributes[0]->newInstance());
         }
     }
 
-    private function extractAnnotation(Scraper $annotation): void
+    private function extractAttribute(Scraper $attribute): void
     {
         $scraper = new Scraper();
 
         $this->initDefaultValues($scraper);
 
-        $vars = get_object_vars($annotation);
+        $vars = get_object_vars($attribute);
         $this->extractChildValues($scraper, $vars);
 
-        $this->scraperAnnotation = $scraper;
+        $this->scraperAttribute = $scraper;
+    }
+
+    private function initDefaultValues(Scraper $scraper): void
+    {
+        $vars = get_object_vars($this->scraperAttribute);
+        // Initializing class properties
+        foreach ($vars as $property => $value) {
+            $scraper->{$property} = $value;
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $vars
+     */
+    private function extractChildValues(Scraper $scraper, array $vars): void
+    {
+        /**
+         * @var string $property
+         * @var string $value
+         */
+        foreach ($vars as $property => $value) {
+            if (!\is_string($value)) {
+                $scraper->{$property} = $value;
+                continue;
+            }
+            $value = $this->replaceVariableInValue($value);
+
+            if ('path' === $property) {
+                $this->handlePath($scraper, $value);
+                continue;
+            }
+
+            $scraper->{$property} = $value;
+        }
+    }
+
+    private function replaceVariableInValue(string $value): string
+    {
+        if (preg_match_all('#{(.*?)}#', $value, $matchs)) {
+            foreach ($matchs[1] as $match) {
+                $method       = 'get' . ucfirst($match);
+                $requestValue = (string) $this->request->{$method}();
+                $value        = str_replace('{' . $match . '}', $requestValue, $value);
+            }
+        }
+        return $value;
     }
 
     private function handlePath(Scraper $scraper, ?string $path = null): void
@@ -80,64 +141,5 @@ final class ExtractAnnotation
             return;
         }
         $scraper->path = $path;
-    }
-
-    private function getScraperAnnotation(): Scraper
-    {
-        if (!$this->hasScraperAnnotation) {
-            throw new ClassNotInitializedException('Class Scraper not found in Request class');
-        }
-
-        if (true === $this->request->isSsl()) {
-            $this->scraperAnnotation->scheme = 'HTTPS';
-        }
-
-        if (false === $this->request->isSsl()) {
-            $this->scraperAnnotation->scheme = 'HTTP';
-        }
-
-        return $this->scraperAnnotation;
-    }
-
-    private function initDefaultValues(Scraper $scraper): void
-    {
-        $vars = get_object_vars($this->scraperAnnotation);
-        // Initializing class properties
-        foreach ($vars as $property => $value) {
-            $scraper->{$property} = $value;
-        }
-    }
-
-    /**
-     * @param array<string, mixed> $vars
-     */
-    private function extractChildValues(Scraper $scraper, array $vars): void
-    {
-        /**
-         * @var string $property
-         * @var string $value
-         */
-        foreach ($vars as $property => $value) {
-            $value = $this->replaceVariableInValue($value);
-
-            if ('path' === $property) {
-                $this->handlePath($scraper, $value);
-                continue;
-            }
-
-            $scraper->{$property} = $value;
-        }
-    }
-
-    public function replaceVariableInValue(string $value): string
-    {
-        if (preg_match_all('#{(.*?)}#', $value, $matchs)) {
-            foreach ($matchs[1] as $match) {
-                $method       = 'get' . ucfirst($match);
-                $requestValue = (string) $this->request->{$method}();
-                $value        = str_replace('{' . $match . '}', $requestValue, $value);
-            }
-        }
-        return $value;
     }
 }
