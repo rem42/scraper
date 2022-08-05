@@ -4,6 +4,6 @@ namespace Scraper\Scraper\Attribute;
 
 enum Scheme: string
 {
-    case HTTP  = 'HTTP';
+    case HTTP = 'HTTP';
     case HTTPS = 'HTTPS';
 }

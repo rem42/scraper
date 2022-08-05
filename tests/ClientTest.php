@@ -40,7 +40,7 @@ final class ClientTest extends TestCase
 
     public function testResponseWithException(): void
     {
-        $exception  = $this->createMock(ServerExceptionInterface::class);
+        $exception = $this->createMock(ServerExceptionInterface::class);
         $httpClient = $this->createMock(HttpClientInterface::class);
         $httpClient
             ->method('request')->willThrowException($exception)
@@ -56,7 +56,7 @@ final class ClientTest extends TestCase
     public function testWithAllOptions(): void
     {
         $responseInterface = $this->createMock(ResponseInterface::class);
-        $responseStream    = $this->createMock(ResponseStreamInterface::class);
+        $responseStream = $this->createMock(ResponseStreamInterface::class);
         $responseInterface
             ->method('getStatusCode')->willReturn(200);
 
@@ -138,7 +138,7 @@ final class ClientTest extends TestCase
         $client = new Client($httpClient);
 
         $reflection = new \ReflectionClass(\get_class($client));
-        $method     = $reflection->getMethod('getApiReflectionClass');
+        $method = $reflection->getMethod('getApiReflectionClass');
         $method->setAccessible(true);
 
         $request = new TestRequestAuth();

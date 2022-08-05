@@ -4,7 +4,7 @@ namespace Scraper\Scraper\Request;
 
 abstract class ScraperRequest
 {
-    private ?bool $ssl       = null;
+    private ?bool $ssl = null;
     private ?bool $authBasic = null;
 
     public function enableSSL(): self

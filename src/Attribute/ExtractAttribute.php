@@ -15,7 +15,7 @@ final class ExtractAttribute
     public function __construct(
         protected ScraperRequest $request
     ) {
-        $this->reflexionClass   = new \ReflectionClass($request::class);
+        $this->reflexionClass = new \ReflectionClass($request::class);
         $this->scraperAttribute = new Scraper();
     }
 
@@ -117,9 +117,9 @@ final class ExtractAttribute
     {
         if (preg_match_all('#{(.*?)}#', $value, $matchs)) {
             foreach ($matchs[1] as $match) {
-                $method       = 'get' . ucfirst($match);
+                $method = 'get' . ucfirst($match);
                 $requestValue = (string) $this->request->{$method}();
-                $value        = str_replace('{' . $match . '}', $requestValue, $value);
+                $value = str_replace('{' . $match . '}', $requestValue, $value);
             }
         }
         return $value;

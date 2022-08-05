@@ -15,7 +15,7 @@
     "symfony/serializer-pack": "^1.1"
   },
   "require-dev": {
-    "rem42/php-cs-fixer-config": "^3.3",
+    "rem42/php-cs-fixer-config": "^3.4",
     "phpstan/phpstan": "^1.8",
     "phpunit/phpunit": "^9.5"
   },
@@ -37,7 +37,7 @@
   "scripts": {
     "static-analysis": "./vendor/bin/phpstan analyse src --level=max --no-progress -vvv",
     "code-style-check": "./vendor/bin/php-cs-fixer fix --dry-run --verbose",
-    "code-style-fix": "./vendor/bin/php-cs-fixer fix",
+    "code-style-fix": "./vendor/bin/php-cs-fixer fix --using-cache=no",
     "unit-test": "./vendor/bin/phpunit"
   }
 }

@@ -29,8 +29,8 @@ final class Client
     public function send(ScraperRequest $request)
     {
         $this->request = $request;
-        $attribute     = ExtractAttribute::extract($this->request);
-        $options       = $this->buildOptions();
+        $attribute = ExtractAttribute::extract($this->request);
+        $options = $this->buildOptions();
 
         $throw = $this->isThrow();
 

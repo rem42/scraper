@@ -30,7 +30,7 @@ class SerializerFactory
 
         $extractor = new PropertyInfoExtractor([], [new PhpDocExtractor(), new ReflectionExtractor()]);
 
-        $encoders    = ['json' => new JsonEncoder(), 'xml' => new XmlEncoder()];
+        $encoders = ['json' => new JsonEncoder(), 'xml' => new XmlEncoder()];
         $normalizers = [
             new ArrayDenormalizer(),
             new ObjectNormalizer($classMetadataFactory, $metadataAwareNameConverter, PropertyAccess::createPropertyAccessor(), $extractor),
