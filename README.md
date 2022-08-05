@@ -22,7 +22,7 @@ composer require rem42/scraper "^3.0"
 Requirement
 -----------
 
-- PHP: >= 7.4
+- PHP: >= 8.1
 
 List of supported Scraper
 -------------------------
