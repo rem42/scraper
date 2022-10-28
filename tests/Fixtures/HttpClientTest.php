@@ -8,6 +8,7 @@ use Symfony\Contracts\HttpClient\ResponseStreamInterface;
 
 /**
  * @internal
+ *
  * @coversNothing
  */
 final class HttpClientTest implements HttpClientInterface
@@ -19,9 +20,6 @@ final class HttpClientTest implements HttpClientInterface
         protected ResponseStreamInterface $responseStream
     ) {}
 
-    /**
-     * @return array<mixed>
-     */
     public function getOptions(): array
     {
         return $this->options;
