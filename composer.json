@@ -17,7 +17,7 @@
   "require-dev": {
     "rem42/php-cs-fixer-config": "^3.4",
     "phpstan/phpstan": "^1.9",
-    "phpunit/phpunit": "^10.0"
+    "phpunit/phpunit": "^9.5"
   },
   "suggest": {
     "ext-json": "If you need to support JSON format",
