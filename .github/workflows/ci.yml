@@ -12,6 +12,8 @@ jobs:
                 include:
                     -   operating-system: 'ubuntu-latest'
                         php-version: '8.1'
+                    -   operating-system: 'ubuntu-latest'
+                        php-version: '8.2'
 
         name: PHP ${{ matrix.php-version }}
 
@@ -55,7 +57,7 @@ jobs:
                         composer info -D
 
             -   name: Run PHP CS Fixer
-                run: composer run-script code-style-check
+                run: PHP_CS_FIXER_IGNORE_ENV=1 composer run-script code-style-check
 
             -   name: Run PHPSTAN
                 run: composer run-script static-analysis
