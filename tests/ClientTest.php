@@ -23,7 +23,8 @@ final class ClientTest extends TestCase
     {
         $responseInterface = $this->createMock(ResponseInterface::class);
         $responseInterface
-            ->method('getStatusCode')->willReturn(200);
+            ->method('getStatusCode')->willReturn(200)
+        ;
 
         $httpClient = $this->createMock(HttpClientInterface::class);
         $httpClient
@@ -58,7 +59,8 @@ final class ClientTest extends TestCase
         $responseInterface = $this->createMock(ResponseInterface::class);
         $responseStream = $this->createMock(ResponseStreamInterface::class);
         $responseInterface
-            ->method('getStatusCode')->willReturn(200);
+            ->method('getStatusCode')->willReturn(200)
+        ;
 
         $httpClient = new HttpClientTest($responseInterface, $responseStream);
 
@@ -93,11 +95,13 @@ final class ClientTest extends TestCase
     {
         $responseInterface = $this->createMock(ResponseInterface::class);
         $responseInterface
-            ->method('getStatusCode')->willReturn(404);
+            ->method('getStatusCode')->willReturn(404)
+        ;
 
         $httpClient = $this->createMock(HttpClientInterface::class);
         $httpClient
-            ->method('request')->willReturn($responseInterface);
+            ->method('request')->willReturn($responseInterface)
+        ;
 
         $client = new Client($httpClient);
 
@@ -111,11 +115,13 @@ final class ClientTest extends TestCase
     {
         $responseInterface = $this->createMock(ResponseInterface::class);
         $responseInterface
-            ->method('getStatusCode')->willReturn(200);
+            ->method('getStatusCode')->willReturn(200)
+        ;
 
         $httpClient = $this->createMock(HttpClientInterface::class);
         $httpClient
-            ->method('request')->willReturn($responseInterface);
+            ->method('request')->willReturn($responseInterface)
+        ;
 
         $client = new Client($httpClient);
 
@@ -129,15 +135,17 @@ final class ClientTest extends TestCase
     {
         $responseInterface = $this->createMock(ResponseInterface::class);
         $responseInterface
-            ->method('getStatusCode')->willReturn(200);
+            ->method('getStatusCode')->willReturn(200)
+        ;
 
         $httpClient = $this->createMock(HttpClientInterface::class);
         $httpClient
-            ->method('request')->willReturn($responseInterface);
+            ->method('request')->willReturn($responseInterface)
+        ;
 
         $client = new Client($httpClient);
 
-        $reflection = new \ReflectionClass(\get_class($client));
+        $reflection = new \ReflectionClass($client::class);
         $method = $reflection->getMethod('getApiReflectionClass');
         $method->setAccessible(true);
 

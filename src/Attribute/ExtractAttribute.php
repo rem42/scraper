@@ -125,7 +125,7 @@ final class ExtractAttribute
         return $value;
     }
 
-    private function handlePath(Scraper $scraper, ?string $path = null): void
+    private function handlePath(Scraper $scraper, string $path = null): void
     {
         if (null === $path) {
             return;
