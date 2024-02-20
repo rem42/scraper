@@ -11,13 +11,13 @@
   ],
   "require": {
     "php": "^8.1",
-    "symfony/http-client-contracts": "^3.2",
+    "symfony/http-client-contracts": "^3.4",
     "symfony/serializer-pack": "^1.2"
   },
   "require-dev": {
     "rem42/php-cs-fixer-config": "^3.4",
-    "phpstan/phpstan": "^1.9",
-    "phpunit/phpunit": "^9.5"
+    "phpstan/phpstan": "^1.10",
+    "phpunit/phpunit": "^9.6"
   },
   "suggest": {
     "ext-json": "If you need to support JSON format",
