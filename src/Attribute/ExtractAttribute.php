@@ -48,7 +48,7 @@ final class ExtractAttribute
     /**
      * @param \ReflectionClass<ScraperRequest>|null $reflectionClass
      */
-    private function recursive(\ReflectionClass $reflectionClass = null): void
+    private function recursive(?\ReflectionClass $reflectionClass = null): void
     {
         if (null === $reflectionClass) {
             $reflectionClass = $this->reflexionClass;
@@ -82,6 +82,7 @@ final class ExtractAttribute
     private function initDefaultValues(Scraper $scraper): void
     {
         $vars = get_object_vars($this->scraperAttribute);
+
         // Initializing class properties
         foreach ($vars as $property => $value) {
             $scraper->{$property} = $value;
@@ -125,7 +126,7 @@ final class ExtractAttribute
         return $value;
     }
 
-    private function handlePath(Scraper $scraper, string $path = null): void
+    private function handlePath(Scraper $scraper, ?string $path = null): void
     {
         if (null === $path) {
             return;

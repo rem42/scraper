@@ -5,6 +5,7 @@ namespace Scraper\Scraper;
 use Scraper\Scraper\Api\AbstractApi;
 use Scraper\Scraper\Attribute\ExtractAttribute;
 use Scraper\Scraper\Exception\ScraperException;
+use Scraper\Scraper\Exception\ScraperNotFoundException;
 use Scraper\Scraper\Request\RequestAuthBasic;
 use Scraper\Scraper\Request\RequestAuthBearer;
 use Scraper\Scraper\Request\RequestBody;
@@ -45,6 +46,9 @@ final class Client
                 throw new ScraperException($response->getContent(false));
             }
         } catch (\Throwable $throwable) {
+            if (isset($response) && 404 === $response->getStatusCode()) {
+                throw new ScraperNotFoundException($response->getContent(false));
+            }
             throw new ScraperException('cannot get response from: ' . $attribute->url(), \is_int($throwable->getCode()) ? $throwable->getCode() : 0, $throwable);
         }
 
@@ -78,7 +82,7 @@ final class Client
     }
 
     /**
-     * @return array<string, array<int|string, mixed>|resource|string>
+     * @return array<string, array<int|string, mixed>|object|resource|string>
      */
     private function buildOptions(): array
     {

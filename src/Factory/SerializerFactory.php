@@ -2,7 +2,6 @@
 
 namespace Scraper\Scraper\Factory;
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
@@ -10,7 +9,6 @@ use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
-use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
 use Symfony\Component\Serializer\Mapping\Loader\AttributeLoader;
 use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
 use Symfony\Component\Serializer\NameConverter\MetadataAwareNameConverter;
@@ -25,11 +23,7 @@ class SerializerFactory
 {
     public static function create(): Serializer
     {
-        if (class_exists(AttributeLoader::class)) {
-            $classMetadataFactory = new ClassMetadataFactory(new AttributeLoader());
-        } else {
-            $classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));
-        }
+        $classMetadataFactory = new ClassMetadataFactory(new AttributeLoader());
 
         $metadataAwareNameConverter = new MetadataAwareNameConverter($classMetadataFactory, new CamelCaseToSnakeCaseNameConverter());
 
