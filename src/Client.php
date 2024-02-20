@@ -82,7 +82,7 @@ final class Client
     }
 
     /**
-     * @return array<string, array<int|string, mixed>|resource|string>
+     * @return array<string, array<int|string, mixed>|object|resource|string>
      */
     private function buildOptions(): array
     {
