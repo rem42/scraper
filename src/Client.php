@@ -35,6 +35,16 @@ final class Client
         $annotation    = ExtractAnnotation::extract($this->request);
         $options       = $this->buildOptions();
 
+        return $this->executeApiCall($annotation, $options);
+    }
+
+    /**
+     * @param ExtractAnnotation $annotation
+     * @param array<string, array<int|string,mixed>|resource|string> $options
+     * @return array<object>|bool|object|string
+     */
+    private function executeApiCall(ExtractAnnotation $annotation, array $options)
+    {
         $throw = $this->isThrow();
 
         try {
@@ -80,6 +90,8 @@ final class Client
         return new \ReflectionClass($apiClass);
     }
 
+use App\Request\RequestOptionProvider;
+
     /**
      * @return array<string, array<int|string,mixed>|resource|string>
      */
@@ -87,29 +99,25 @@ final class Client
     {
         $options = [];
 
-        if ($this->request instanceof RequestAuthBearer) {
-            $options['auth_bearer'] = $this->request->getBearer();
+        // Define the list of RequestOptionProvider implementers
+        $optionProviders = [
+            RequestAuthBasic::class,
+            RequestAuthBearer::class,
+            RequestBody::class,
+            RequestBodyJson::class,
+            RequestHeaders::class,
+            RequestQuery::class,
+        ];
+
+        foreach ($optionProviders as $providerClass) {
+            if ($this->request instanceof $providerClass) {
+                // Ensure $this->request is treated as RequestOptionProvider
+                if ($this->request instanceof RequestOptionProvider) {
+                    $options = array_merge($options, $this->request->getOptions());
+                }
+            }
         }
 
-        if ($this->request instanceof RequestAuthBasic && false !== $this->request->isAuthBasic()) {
-            $options['auth_basic'] = $this->request->getAuthBasic();
-        }
-
-        if ($this->request instanceof RequestHeaders) {
-            $options['headers'] = $this->request->getHeaders();
-        }
-
-        if ($this->request instanceof RequestQuery) {
-            $options['query'] = $this->request->getQuery();
-        }
-
-        if ($this->request instanceof RequestBody) {
-            $options['body'] = $this->request->getBody();
-        }
-
-        if ($this->request instanceof RequestBodyJson) {
-            $options['json'] = $this->request->getJson();
-        }
         return $options;
     }
 
