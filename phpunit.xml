@@ -14,7 +14,6 @@
   <testsuites>
     <testsuite name="default">
       <directory>tests</directory>
-      <exclude>tests/Fixtures</exclude>
     </testsuite>
   </testsuites>
 

@@ -1,10 +1,11 @@
+
 Scraper
 =======
 
-Boîte à outils légère pour construire des "scrapers" réutilisables :
-- Déclarez une classe Request annotée par l'attribut PHP `#[Scraper(...)]`.
-- Fournissez la classe Api correspondante (remplacez "Request" par "Api" dans le nom) qui étend `Scraper\Api\AbstractApi` et implémente `execute()`.
-- Utilisez `Scraper\Client` avec un `HttpClientInterface` pour exécuter la requête et récupérer l'objet désérialisé.
+Lightweight toolbox to build reusable "scrapers":
+- Declare a Request class annotated with the PHP attribute `#[Scraper(...)]`.
+- Provide the corresponding Api class (replace "Request" with "Api" in the name) which extends `\Scraper\Scraper\Api\AbstractApi` and implements `execute()`.
+- Use `\Scraper\Scraper\Client` with an `HttpClientInterface` to execute the request and retrieve the deserialized object.
 
 Badges
 ------
@@ -21,88 +22,94 @@ Installation
 composer require rem42/scraper "^3.0"
 ```
 
-Courte introduction
--------------------
+Short introduction
+------------------
 
-Le package centralise la logique suivante :
-1. Une Request (sous `src/Request/`) définit les données nécessaires et expose des getters utilisés dans les variables de chemin.
-2. L'attribut `#[\Scraper\Scraper\Attribute\Scraper(...)]` (sur la Request) décrit `method`, `scheme`, `host`, `path`.
-3. `Scraper\Client::send()` lit cet attribut (via `ExtractAttribute`), construit les options HTTP (headers, query, body, json, auth) selon les interfaces implémentées par la Request, puis effectue l'appel HTTP.
-4. La classe Api correspondante (ex : `FooApi`) est instanciée et sa méthode `execute()` retourne l'objet/array/string final.
+The package centralizes the following logic:
+1. A Request (under `src/Request/`) defines the necessary data and exposes getters used in path variables.
+2. The attribute `#[\Scraper\Scraper\Attribute\Scraper(...)]` (on the Request) describes `method`, `scheme`, `host`, `path`.
+3. `\Scraper\Scraper\Client::send()` reads this attribute (via `ExtractAttribute`), builds the HTTP options (headers, query, body, json, auth) according to the interfaces implemented by the Request, then performs the HTTP call.
+4. The matching Api class (eg: `FooApi`) is instantiated and its `execute()` method returns the final object/array/string.
 
-Quickstart (exemple minimal)
+Quickstart (minimal example)
 ----------------------------
 
-Exemple schématique (adapter selon votre autoload / imports) :
+
+Schematic example (adapt according to your autoload/imports). Examples use `use` imports:
 
 ```php
 use Symfony\Component\HttpClient\HttpClient;
 use Scraper\Scraper\Client;
+use Scraper\Scraper\Request\ScraperRequest;
+use Scraper\Scraper\Attribute\Scraper;
+use Scraper\Scraper\Attribute\Method;
+use Scraper\Scraper\Attribute\Scheme;
+use Scraper\Scraper\Api\AbstractApi;
 
-#[\Scraper\Scraper\Attribute\Scraper(
-	method: \Scraper\Scraper\Attribute\Method::GET,
-	scheme: \Scraper\Scraper\Attribute\Scheme::HTTPS,
+#[Scraper(
+	method: Method::GET,
+	scheme: Scheme::HTTPS,
 	host: 'example.com',
 	path: '/items/{id}'
 )]
-class ItemRequest extends \Scraper\Scraper\Request\ScraperRequest
+class ItemRequest extends ScraperRequest
 {
 	public function __construct(private string $id) {}
 	public function getId(): string { return $this->id; }
 }
 
-// Provide a matching Api: ItemApi extends Scraper\Scraper\Api\AbstractApi
+// Provide a matching Api: ItemApi extends AbstractApi
 
 $http = HttpClient::create();
 $client = new Client($http);
 $result = $client->send(new ItemRequest('42'));
 ```
 
-Conventions importantes
-----------------------
+Important conventions
+---------------------
 
-- PSR-4 namespace racine : `Scraper\\Scraper\\` -> `src/` (voir `composer.json`).
-- Naming convention : `XRequest` -> `XApi` (Client effectue ce remplacement automatiquement via réflexion).
-- Dans l'attribut `path`, les variables `{name}` sont remplacées par l'appel `getName()` sur l'instance Request (voir `src/Attribute/ExtractAttribute.php`).
-- Implémentez les interfaces dans `src/Request/` pour activer les options : `RequestHeaders`, `RequestQuery`, `RequestBody`, `RequestBodyJson`, `RequestAuthBearer`, `RequestAuthBasic`.
+- PSR-4 root namespace: `Scraper\\Scraper\\` -> `src/` (see `composer.json`).
+- Naming convention: `XRequest` -> `XApi` (Client performs this replacement automatically using reflection).
+- In the `path` attribute, variables `{name}` are replaced by calling `getName()` on the Request instance (see `src/Attribute/ExtractAttribute.php`).
+- Implement the interfaces in `src/Request/` to enable options: `RequestHeaders`, `RequestQuery`, `RequestBody`, `RequestBodyJson`, `RequestAuthBearer`, `RequestAuthBasic`.
 
-Tests / qualité / style
+Tests / quality / style
 -----------------------
 
-- Lancer les tests unitaires :
+- Run unit tests:
 
 ```bash
 composer run unit-test
-# ou
+# or
 ./vendor/bin/phpunit
 ```
 
-- Analyse statique (phpstan) :
+- Static analysis (phpstan):
 
 ```bash
 composer run static-analysis
 ```
 
-- Vérifier / appliquer le style (php-cs-fixer) :
+- Check / apply coding style (php-cs-fixer):
 
 ```bash
 composer run code-style-check
 composer run code-style-fix
 ```
 
-Compatibilité PHP
+PHP compatibility
 -----------------
 
-`composer.json` demande `php: ^8.4` — le code utilise des enums et des types récents, il est donc recommandé d'utiliser PHP 8.4+.
+`composer.json` requires `php: ^8.4` — the code uses enums and recent types, so PHP 8.4+ is recommended.
 
-Ressources et documentation pour agents
---------------------------------------
+Resources and documentation for agents
+------------------------------------
 
-- Fichier d'aide pour agents : `AGENTS.md` (conseils, patterns, commandes). Voir `packages/scraper/AGENTS.md`.
-- Points clés du code : `src/Client.php`, `src/Attribute/ExtractAttribute.php`, `src/Factory/SerializerFactory.php`.
+- Agent helper file: `AGENTS.md` (tips, patterns, commands). See `packages/scraper/AGENTS.md`.
+- Key code points: `src/Client.php`, `src/Attribute/ExtractAttribute.php`, `src/Factory/SerializerFactory.php`.
 
-Liste (non exhaustive) de scrapers publiés
------------------------------------------
+Non-exhaustive list of published scrapers
+----------------------------------------
 - rem42/scraper-allocine
 - rem42/scraper-colissimo
 - rem42/scraper-deezer
@@ -113,8 +120,8 @@ Liste (non exhaustive) de scrapers publiés
 - rem42/scraper-tmdb
 - rem42/scraper-tnt
 
-Contribuer
----------
+Contributing
+------------
 
-Voir `AGENTS.md` pour les règles et patterns à respecter. Pour les PRs : tests verts + phpstan level max.
+See `AGENTS.md` for rules and patterns to follow. For PRs: green tests + highest phpstan level.
 
