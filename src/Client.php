@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Scraper\Scraper;
 
@@ -21,7 +23,7 @@ final class Client
     private ScraperRequest $request;
 
     public function __construct(
-        protected HttpClientInterface $httpClient
+        private HttpClientInterface $httpClient,
     ) {}
 
     /**
@@ -111,6 +113,7 @@ final class Client
         if ($this->request instanceof RequestBodyJson) {
             $options['json'] = $this->request->getJson();
         }
+
         return $options;
     }
 
@@ -121,6 +124,7 @@ final class Client
         if ($this->request instanceof RequestException) {
             $throw = $this->request->isThrow();
         }
+
         return $throw;
     }
 }

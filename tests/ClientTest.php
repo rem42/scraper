@@ -1,11 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Scraper\Scraper\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Scraper\Scraper\Api\AbstractApi;
 use Scraper\Scraper\Client;
-use Scraper\Scraper\Tests\Fixtures\HttpClientTest;
+use Scraper\Scraper\Tests\Fixtures\HttpClientMock;
 use Scraper\Scraper\Tests\Fixtures\TestApiAuth;
 use Scraper\Scraper\Tests\Fixtures\TestRequestAuth;
 use Scraper\Scraper\Tests\Fixtures\TestWithoutApiFileRequest;
@@ -62,7 +64,7 @@ final class ClientTest extends TestCase
             ->method('getStatusCode')->willReturn(200)
         ;
 
-        $httpClient = new HttpClientTest($responseInterface, $responseStream);
+        $httpClient = new HttpClientMock($responseInterface, $responseStream);
 
         $client = new Client($httpClient);
 

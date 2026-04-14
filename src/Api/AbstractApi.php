@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Scraper\Scraper\Api;
 
@@ -15,7 +17,7 @@ abstract class AbstractApi implements ApiInterface
     public function __construct(
         protected ScraperRequest $request,
         protected Scraper $scraper,
-        protected ResponseInterface $response
+        protected ResponseInterface $response,
     ) {
         $this->serializer = SerializerFactory::create();
     }

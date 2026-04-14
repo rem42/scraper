@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Scraper\Scraper\Attribute;
 
@@ -11,7 +13,7 @@ final class Scraper
         public ?Method $method = null,
         public ?Scheme $scheme = null,
         public ?string $host = null,
-        public ?string $path = null
+        public ?string $path = null,
     ) {}
 
     public function getMethod(): string
@@ -38,6 +40,7 @@ final class Scraper
         if ($this->path) {
             $url .= ltrim($this->path, '/');
         }
+
         return $url;
     }
 }

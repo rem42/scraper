@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Scraper\Scraper\Tests\Fixtures;
 
@@ -8,6 +10,4 @@ use Scraper\Scraper\Attribute\Scraper;
 use Scraper\Scraper\Request\ScraperRequest;
 
 #[Scraper(method: Method::GET, scheme: Scheme::HTTPS, host: 'host-test.api', path: 'path/to/endpoint')]
-abstract class TestParentRequest extends ScraperRequest
-{
-}
+abstract class TestParentRequest extends ScraperRequest {}

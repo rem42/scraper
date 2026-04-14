@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Scraper\Scraper\Attribute;
 
@@ -13,7 +15,7 @@ final class ExtractAttribute
     private bool $hasScraperAttribute = false;
 
     public function __construct(
-        protected ScraperRequest $request
+        private ScraperRequest $request,
     ) {
         $this->reflexionClass = new \ReflectionClass($request::class);
         $this->scraperAttribute = new Scraper();
@@ -123,6 +125,7 @@ final class ExtractAttribute
                 $value = str_replace('{' . $match . '}', $requestValue, $value);
             }
         }
+
         return $value;
     }
 
@@ -134,11 +137,13 @@ final class ExtractAttribute
 
         if ('' !== $path && '/' === $path[0]) {
             $scraper->path = $path;
+
             return;
         }
 
         if (isset($scraper->path)) {
             $scraper->path = rtrim($scraper->path, '/') . '/' . ltrim($path, '/');
+
             return;
         }
         $scraper->path = $path;

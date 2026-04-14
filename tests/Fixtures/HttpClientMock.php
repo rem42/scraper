@@ -1,23 +1,22 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Scraper\Scraper\Tests\Fixtures;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 use Symfony\Contracts\HttpClient\ResponseStreamInterface;
 
-/**
- * @internal
- *
- * @coversNothing
- */
-final class HttpClientTest implements HttpClientInterface
+#[CoversNothing]
+final class HttpClientMock implements HttpClientInterface
 {
     private array $options;
 
     public function __construct(
-        protected ResponseInterface $response,
-        protected ResponseStreamInterface $responseStream
+        private ResponseInterface $response,
+        private ResponseStreamInterface $responseStream,
     ) {}
 
     public function getOptions(): array
@@ -28,6 +27,7 @@ final class HttpClientTest implements HttpClientInterface
     public function request(string $method, string $url, array $options = []): ResponseInterface
     {
         $this->options = $options;
+
         return $this->response;
     }
 
@@ -43,6 +43,7 @@ final class HttpClientTest implements HttpClientInterface
             $this->responseStream
         );
         $self->options = $options;
+
         return $self;
     }
 }
