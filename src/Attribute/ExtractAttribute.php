@@ -10,14 +10,14 @@ use Scraper\Scraper\Request\ScraperRequest;
 final class ExtractAttribute
 {
     /** @var \ReflectionClass<ScraperRequest> */
-    private \ReflectionClass $reflexionClass;
+    private \ReflectionClass $reflectionClass;
     private Scraper $scraperAttribute;
     private bool $hasScraperAttribute = false;
 
     public function __construct(
-        private ScraperRequest $request,
+        private readonly ScraperRequest $request,
     ) {
-        $this->reflexionClass = new \ReflectionClass($request::class);
+        $this->reflectionClass = new \ReflectionClass($request::class);
         $this->scraperAttribute = new Scraper();
     }
 
@@ -25,7 +25,7 @@ final class ExtractAttribute
     {
         $self = new self($request);
 
-        $self->recursive();
+        $self->traverseHierarchy();
 
         return $self->getScraperAnnotation();
     }
@@ -50,15 +50,20 @@ final class ExtractAttribute
     /**
      * @param \ReflectionClass<ScraperRequest>|null $reflectionClass
      */
-    private function recursive(?\ReflectionClass $reflectionClass = null): void
+    /**
+     * Parcourt la hiérarchie de classes pour récupérer l'attribut Scraper.
+     *
+     * @param \ReflectionClass<ScraperRequest>|null $reflectionClass
+     */
+    private function traverseHierarchy(?\ReflectionClass $reflectionClass = null): void
     {
         if (null === $reflectionClass) {
-            $reflectionClass = $this->reflexionClass;
+            $reflectionClass = $this->reflectionClass;
         }
         $parentClass = $reflectionClass->getParentClass();
 
         if ($parentClass) {
-            $this->recursive($parentClass);
+            $this->traverseHierarchy($parentClass);
         }
 
         $attributes = $reflectionClass->getAttributes(Scraper::class);
@@ -75,7 +80,9 @@ final class ExtractAttribute
 
         $this->initDefaultValues($scraper);
 
+        /** @var array<string, mixed> $vars */
         $vars = get_object_vars($attribute);
+
         $this->extractChildValues($scraper, $vars);
 
         $this->scraperAttribute = $scraper;
@@ -118,10 +125,33 @@ final class ExtractAttribute
 
     private function replaceVariableInValue(string $value): string
     {
-        if (preg_match_all('#{(.*?)}#', $value, $matchs)) {
-            foreach ($matchs[1] as $match) {
+        // Match tokens like {name} but avoid greedy matches
+        if (preg_match_all('/\{([^}]+)}/', $value, $matches)) {
+            foreach ($matches[1] as $match) {
                 $method = 'get' . ucfirst($match);
-                $requestValue = (string) $this->request->{$method}();
+
+                // If the getter is not available on the Request, skip substitution
+                if (!method_exists($this->request, $method)) {
+                    // leave the placeholder as-is to make missing getters visible in tests/logs
+                    continue;
+                }
+
+                $tmp = $this->request->{$method}();
+
+                // Normalize to string safely: accept scalars and objects implementing __toString(),
+                // otherwise fall back to empty string to avoid type errors in callers.
+                if (is_object($tmp)) {
+                    if (method_exists($tmp, '__toString')) {
+                        $requestValue = (string) $tmp;
+                    } else {
+                        $requestValue = '';
+                    }
+                } elseif (is_scalar($tmp) || null === $tmp) {
+                    $requestValue = (string) $tmp;
+                } else {
+                    $requestValue = '';
+                }
+
                 $value = str_replace('{' . $match . '}', $requestValue, $value);
             }
         }

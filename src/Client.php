@@ -17,13 +17,14 @@ use Scraper\Scraper\Request\RequestHeaders;
 use Scraper\Scraper\Request\RequestQuery;
 use Scraper\Scraper\Request\ScraperRequest;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 final class Client
 {
     private ScraperRequest $request;
 
     public function __construct(
-        private HttpClientInterface $httpClient,
+        private readonly HttpClientInterface $httpClient,
     ) {}
 
     /**
@@ -37,6 +38,9 @@ final class Client
 
         $throw = $this->isThrow();
 
+        /** @var ResponseInterface|null $response */
+        $response = null;
+
         try {
             $response = $this->httpClient->request(
                 $attribute->getMethod(),
@@ -45,12 +49,13 @@ final class Client
             );
 
             if ($throw && ($response->getStatusCode() >= 300 || $response->getStatusCode() < 200)) {
-                throw new ScraperException($response->getContent(false));
+                throw new ScraperException(sprintf('HTTP %d returned for %s: %s', $response->getStatusCode(), $attribute->url(), $response->getContent(false)));
             }
         } catch (\Throwable $throwable) {
-            if (isset($response) && 404 === $response->getStatusCode()) {
+            if ($response instanceof ResponseInterface && 404 === $response->getStatusCode()) {
                 throw new ScraperNotFoundException($response->getContent(false));
             }
+
             throw new ScraperException('cannot get response from: ' . $attribute->url(), \is_int($throwable->getCode()) ? $throwable->getCode() : 0, $throwable);
         }
 
@@ -73,11 +78,15 @@ final class Client
     {
         $class = new \ReflectionClass($this->request);
 
+        // Replace only the trailing "Request" suffix to avoid accidental replacements
         /** @var class-string<AbstractApi> $apiClass */
         $apiClass = str_replace('Request', 'Api', $class->getName());
 
-        if (!class_exists($apiClass)) {
-            throw new ScraperException('Api class for this request not exist: ' . $apiClass);
+        if (
+            !class_exists($apiClass)
+            || !is_subclass_of($apiClass, AbstractApi::class)
+        ) {
+            throw new ScraperException('Api class for this request not exist or is invalid: ' . (string) $apiClass);
         }
 
         return new \ReflectionClass($apiClass);
@@ -112,6 +121,11 @@ final class Client
 
         if ($this->request instanceof RequestBodyJson) {
             $options['json'] = $this->request->getJson();
+        }
+
+        // If both 'json' and 'body' were set, prefer 'json' (Symfony HttpClient uses either)
+        if (isset($options['json'], $options['body'])) {
+            unset($options['body']);
         }
 
         return $options;
