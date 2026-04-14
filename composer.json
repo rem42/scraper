@@ -10,7 +10,7 @@
     }
   ],
   "require": {
-    "php": "^8.1",
+    "php": "^8.4",
     "symfony/http-client-contracts": "^3.5",
     "symfony/serializer-pack": "^1.3"
   },
