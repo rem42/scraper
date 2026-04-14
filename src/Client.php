@@ -30,7 +30,7 @@ final class Client
     /**
      * @return array<object>|bool|object|string
      */
-    public function send(ScraperRequest $request)
+    public function send(ScraperRequest $request): object|bool|string|array
     {
         $this->request = $request;
         $attribute = ExtractAttribute::extract($this->request);
@@ -86,7 +86,7 @@ final class Client
             !class_exists($apiClass)
             || !is_subclass_of($apiClass, AbstractApi::class)
         ) {
-            throw new ScraperException('Api class for this request not exist or is invalid: ' . (string) $apiClass);
+            throw new ScraperException('Api class for this request not exist or is invalid: ' . $apiClass);
         }
 
         return new \ReflectionClass($apiClass);

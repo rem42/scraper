@@ -10,7 +10,7 @@ use Scraper\Scraper\Request\ScraperRequest;
 final class ExtractAttribute
 {
     /** @var \ReflectionClass<ScraperRequest> */
-    private \ReflectionClass $reflectionClass;
+    private readonly \ReflectionClass $reflectionClass;
     private Scraper $scraperAttribute;
     private bool $hasScraperAttribute = false;
 
