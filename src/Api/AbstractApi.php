@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Scraper\Scraper\Api;
 
-use Scraper\Scraper\Attribute\Scraper;
+use Scraper\Scraper\Dto\ScraperConfig;
 use Scraper\Scraper\Factory\SerializerFactory;
 use Scraper\Scraper\Request\ScraperRequest;
 use Symfony\Component\Serializer\Serializer;
@@ -16,7 +16,7 @@ abstract class AbstractApi implements ApiInterface
 
     public function __construct(
         protected ScraperRequest $request,
-        protected Scraper $scraper,
+        protected ScraperConfig $scraper,
         protected ResponseInterface $response,
     ) {
         $this->serializer = SerializerFactory::create();

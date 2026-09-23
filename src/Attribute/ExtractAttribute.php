@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Scraper\Scraper\Attribute;
 
+use Scraper\Scraper\Dto\ScraperConfig;
 use Scraper\Scraper\Exception\ClassNotInitializedException;
+use Scraper\Scraper\Exception\ScraperConfigurationException;
 use Scraper\Scraper\Request\ScraperRequest;
+use Scraper\Scraper\Service\PlaceholderResolver;
 
 final class ExtractAttribute
 {
@@ -21,13 +24,32 @@ final class ExtractAttribute
         $this->scraperAttribute = new Scraper();
     }
 
-    public static function extract(ScraperRequest $request): Scraper
+    public static function extract(ScraperRequest $request): ScraperConfig
     {
         $self = new self($request);
 
         $self->traverseHierarchy();
 
-        return $self->getScraperAnnotation();
+        $annotation = $self->getScraperAnnotation();
+
+        if (null === $annotation->method) {
+            throw new ScraperConfigurationException('Method not found');
+        }
+
+        if (null === $annotation->scheme) {
+            throw new ScraperConfigurationException('scheme is required');
+        }
+
+        if (null === $annotation->host) {
+            throw new ScraperConfigurationException('host is required');
+        }
+
+        return new ScraperConfig(
+            $annotation->method,
+            $annotation->scheme,
+            $annotation->host,
+            $annotation->path ?? '',
+        );
     }
 
     private function getScraperAnnotation(): Scraper
@@ -48,11 +70,6 @@ final class ExtractAttribute
     }
 
     /**
-     * @param \ReflectionClass<ScraperRequest>|null $reflectionClass
-     */
-    /**
-     * Parcourt la hiérarchie de classes pour récupérer l'attribut Scraper.
-     *
      * @param \ReflectionClass<ScraperRequest>|null $reflectionClass
      */
     private function traverseHierarchy(?\ReflectionClass $reflectionClass = null): void
@@ -112,7 +129,7 @@ final class ExtractAttribute
                 $scraper->{$property} = $value;
                 continue;
             }
-            $value = $this->replaceVariableInValue($value);
+            $value = PlaceholderResolver::resolve($value, $this->request);
 
             if ('path' === $property) {
                 $this->handlePath($scraper, $value);
@@ -121,42 +138,6 @@ final class ExtractAttribute
 
             $scraper->{$property} = $value;
         }
-    }
-
-    private function replaceVariableInValue(string $value): string
-    {
-        // Match tokens like {name} but avoid greedy matches
-        if (preg_match_all('/\{([^}]+)}/', $value, $matches)) {
-            foreach ($matches[1] as $match) {
-                $method = 'get' . ucfirst($match);
-
-                // If the getter is not available on the Request, skip substitution
-                if (!method_exists($this->request, $method)) {
-                    // leave the placeholder as-is to make missing getters visible in tests/logs
-                    continue;
-                }
-
-                $tmp = $this->request->{$method}();
-
-                // Normalize to string safely: accept scalars and objects implementing __toString(),
-                // otherwise fall back to empty string to avoid type errors in callers.
-                if (is_object($tmp)) {
-                    if (method_exists($tmp, '__toString')) {
-                        $requestValue = (string) $tmp;
-                    } else {
-                        $requestValue = '';
-                    }
-                } elseif (is_scalar($tmp) || null === $tmp) {
-                    $requestValue = (string) $tmp;
-                } else {
-                    $requestValue = '';
-                }
-
-                $value = str_replace('{' . $match . '}', $requestValue, $value);
-            }
-        }
-
-        return $value;
     }
 
     private function handlePath(Scraper $scraper, ?string $path = null): void

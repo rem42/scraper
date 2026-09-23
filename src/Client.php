@@ -6,15 +6,12 @@ namespace Scraper\Scraper;
 
 use Scraper\Scraper\Api\AbstractApi;
 use Scraper\Scraper\Attribute\ExtractAttribute;
+use Scraper\Scraper\Builder\RequestOptionBuilder;
 use Scraper\Scraper\Exception\ScraperException;
+use Scraper\Scraper\Exception\ScraperHttpException;
 use Scraper\Scraper\Exception\ScraperNotFoundException;
-use Scraper\Scraper\Request\RequestAuthBasic;
-use Scraper\Scraper\Request\RequestAuthBearer;
-use Scraper\Scraper\Request\RequestBody;
-use Scraper\Scraper\Request\RequestBodyJson;
+use Scraper\Scraper\Factory\ApiFactory;
 use Scraper\Scraper\Request\RequestException;
-use Scraper\Scraper\Request\RequestHeaders;
-use Scraper\Scraper\Request\RequestQuery;
 use Scraper\Scraper\Request\ScraperRequest;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
@@ -33,8 +30,8 @@ final class Client
     public function send(ScraperRequest $request): object|bool|string|array
     {
         $this->request = $request;
-        $attribute = ExtractAttribute::extract($this->request);
-        $options = $this->buildOptions();
+        $config = ExtractAttribute::extract($this->request);
+        $options = RequestOptionBuilder::build($this->request);
 
         $throw = $this->isThrow();
 
@@ -43,92 +40,35 @@ final class Client
 
         try {
             $response = $this->httpClient->request(
-                $attribute->getMethod(),
-                $attribute->url(),
+                $config->getMethod(),
+                $config->url(),
                 $options
             );
 
-            if ($throw && ($response->getStatusCode() >= 300 || $response->getStatusCode() < 200)) {
-                throw new ScraperException(sprintf('HTTP %d returned for %s: %s', $response->getStatusCode(), $attribute->url(), $response->getContent(false)));
+            if (
+                $throw
+                && ($response->getStatusCode() >= 300 || $response->getStatusCode() < 200)
+            ) {
+                throw new ScraperHttpException(sprintf('HTTP %d returned for %s: %s', $response->getStatusCode(), $config->url(), $response->getContent(false)), $response->getStatusCode(), $config->url(), $response->getContent(false));
             }
         } catch (\Throwable $throwable) {
             if ($response instanceof ResponseInterface && 404 === $response->getStatusCode()) {
                 throw new ScraperNotFoundException($response->getContent(false));
             }
 
-            throw new ScraperException('cannot get response from: ' . $attribute->url(), \is_int($throwable->getCode()) ? $throwable->getCode() : 0, $throwable);
+            throw new ScraperException('cannot get response from: ' . $config->url(), \is_int($throwable->getCode()) ? $throwable->getCode() : 0, $throwable);
         }
 
-        $apiReflectionClass = $this->getApiReflectionClass();
+        $apiReflectionClass = ApiFactory::getReflectionClass($this->request);
 
         /** @var AbstractApi $apiInstance */
         $apiInstance = $apiReflectionClass->newInstanceArgs([
             $this->request,
-            $attribute,
+            $config,
             $response,
         ]);
 
         return $apiInstance->execute();
-    }
-
-    /**
-     * @return \ReflectionClass<AbstractApi>
-     */
-    private function getApiReflectionClass(): \ReflectionClass
-    {
-        $class = new \ReflectionClass($this->request);
-
-        // Replace only the trailing "Request" suffix to avoid accidental replacements
-        /** @var class-string<AbstractApi> $apiClass */
-        $apiClass = str_replace('Request', 'Api', $class->getName());
-
-        if (
-            !class_exists($apiClass)
-            || !is_subclass_of($apiClass, AbstractApi::class)
-        ) {
-            throw new ScraperException('Api class for this request not exist or is invalid: ' . $apiClass);
-        }
-
-        return new \ReflectionClass($apiClass);
-    }
-
-    /**
-     * @return array<string, array<int|string, mixed>|object|resource|string>
-     */
-    private function buildOptions(): array
-    {
-        $options = [];
-
-        if ($this->request instanceof RequestAuthBearer) {
-            $options['auth_bearer'] = $this->request->getBearer();
-        }
-
-        if ($this->request instanceof RequestAuthBasic && false !== $this->request->isAuthBasic()) {
-            $options['auth_basic'] = $this->request->getAuthBasic();
-        }
-
-        if ($this->request instanceof RequestHeaders) {
-            $options['headers'] = $this->request->getHeaders();
-        }
-
-        if ($this->request instanceof RequestQuery) {
-            $options['query'] = $this->request->getQuery();
-        }
-
-        if ($this->request instanceof RequestBody) {
-            $options['body'] = $this->request->getBody();
-        }
-
-        if ($this->request instanceof RequestBodyJson) {
-            $options['json'] = $this->request->getJson();
-        }
-
-        // If both 'json' and 'body' were set, prefer 'json' (Symfony HttpClient uses either)
-        if (isset($options['json'], $options['body'])) {
-            unset($options['body']);
-        }
-
-        return $options;
     }
 
     private function isThrow(): bool

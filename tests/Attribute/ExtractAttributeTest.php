@@ -6,8 +6,6 @@ namespace Scraper\Scraper\Tests\Attribute;
 
 use PHPUnit\Framework\TestCase;
 use Scraper\Scraper\Attribute\ExtractAttribute;
-use Scraper\Scraper\Attribute\Method;
-use Scraper\Scraper\Attribute\Scheme;
 use Scraper\Scraper\Exception\ClassNotInitializedException;
 use Scraper\Scraper\Tests\Fixtures\TestChildChangePathRequest;
 use Scraper\Scraper\Tests\Fixtures\TestChildRequest;
@@ -24,14 +22,12 @@ class ExtractAttributeTest extends TestCase
     {
         $request = new TestRequestAuth();
 
-        $scraper = ExtractAttribute::extract($request);
+        $config = ExtractAttribute::extract($request);
 
-        $this->assertInstanceOf(Method::class, $scraper->method);
-        $this->assertEquals('GET', $scraper->method->value);
-        $this->assertInstanceOf(Scheme::class, $scraper->scheme);
-        $this->assertEquals('HTTPS', $scraper->scheme->value);
-        $this->assertEquals('host-test.api', $scraper->host);
-        $this->assertEquals('path/to/endpoint', $scraper->path);
+        $this->assertEquals('GET', $config->method->value);
+        $this->assertEquals('HTTPS', $config->scheme->value);
+        $this->assertEquals('host-test.api', $config->host);
+        $this->assertEquals('path/to/endpoint', $config->path);
     }
 
     public function testExtractRequestWithParameters(): void
@@ -42,12 +38,12 @@ class ExtractAttributeTest extends TestCase
             ->setNdd('fr')
         ;
 
-        $scraper = ExtractAttribute::extract($request);
+        $config = ExtractAttribute::extract($request);
 
-        $this->assertEquals('HTTPS', $scraper->scheme->value);
-        $this->assertEquals('host-test.fr', $scraper->host);
-        $this->assertEquals('path/to/my-endpoint', $scraper->path);
-        $this->assertEquals('GET', $scraper->method->value);
+        $this->assertEquals('HTTPS', $config->scheme->value);
+        $this->assertEquals('host-test.fr', $config->host);
+        $this->assertEquals('path/to/my-endpoint', $config->path);
+        $this->assertEquals('GET', $config->method->value);
     }
 
     public function testExtractRequestWithoutAnnotation(): void
@@ -63,18 +59,18 @@ class ExtractAttributeTest extends TestCase
     {
         $request = new TestChildRequest();
 
-        $scraper = ExtractAttribute::extract($request);
+        $config = ExtractAttribute::extract($request);
 
-        $this->assertEquals('path/to/endpoint/add/child/path', $scraper->path);
+        $this->assertEquals('path/to/endpoint/add/child/path', $config->path);
     }
 
     public function testExtractRequestWithParentAndChangePathRequest(): void
     {
         $request = new TestChildChangePathRequest();
 
-        $scraper = ExtractAttribute::extract($request);
+        $config = ExtractAttribute::extract($request);
 
-        $this->assertEquals('/add/child/path', $scraper->path);
+        $this->assertEquals('/add/child/path', $config->path);
     }
 
     public function testDisableEnableSSL(): void
@@ -82,13 +78,13 @@ class ExtractAttributeTest extends TestCase
         $request = new TestChildRequest();
         $request->disableSSL();
 
-        $scraper = ExtractAttribute::extract($request);
+        $config = ExtractAttribute::extract($request);
 
-        $this->assertEquals('HTTP', $scraper->scheme->value);
+        $this->assertEquals('HTTP', $config->scheme->value);
         $request->enableSSL();
 
-        $scraper = ExtractAttribute::extract($request);
+        $config = ExtractAttribute::extract($request);
 
-        $this->assertEquals('HTTPS', $scraper->scheme->value);
+        $this->assertEquals('HTTPS', $config->scheme->value);
     }
 }
